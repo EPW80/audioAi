@@ -93,3 +93,6 @@ pnpm-lock.yaml
 *.swp
 *~
 .DS_Store
+
+# Project planning and notes
+claude.md
