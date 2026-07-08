@@ -4,7 +4,7 @@ import { useAuthStore } from '../stores/authStore';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
 
-const PLAYHEAD = 0.42;
+const PLAYHEAD = 1;
 
 // Deterministic bars matching the design prototype's seeded generator
 function generateBars(total = 96) {
