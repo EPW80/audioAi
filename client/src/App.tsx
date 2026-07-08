@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation, matchPath } from 'react-router-dom';
 import { useAuthStore } from './stores/authStore';
 import { Header } from './components/layout/Header';
 import { Home } from './pages/Home';
@@ -6,7 +6,6 @@ import { Login } from './pages/Login';
 import { Editor } from './pages/Editor';
 import { Projects } from './pages/Projects';
 import { RenderView } from './pages/RenderView';
-import { ScanLines } from './components/ui/ScanLines';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const token = useAuthStore((state) => state.token);
@@ -16,15 +15,17 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 function App() {
   const location = useLocation();
   const isRenderPage = location.pathname === '/render';
+  // The editor renders its own single top bar instead of the global header
+  const isEditorPage = matchPath('/editor/:projectId', location.pathname) !== null;
 
-  // Render page is headless - no header or scan lines
+  // Render page is headless - no header
   if (isRenderPage) {
     return <RenderView />;
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
-      <Header />
+    <div className="min-h-screen flex flex-col bg-app">
+      {!isEditorPage && <Header />}
       <main className="flex-1">
         <Routes>
           <Route path="/" element={<Home />} />
@@ -47,7 +48,6 @@ function App() {
           />
         </Routes>
       </main>
-      <ScanLines intensity="subtle" color="cyan" />
     </div>
   );
 }

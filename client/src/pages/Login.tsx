@@ -2,12 +2,9 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
 import { authApi } from '../lib/api';
-import { AnimatedGradient } from '../components/ui/AnimatedGradient';
-import { GridBackground } from '../components/ui/GridBackground';
-import { GlassCard } from '../components/ui/GlassCard';
-import { GlassButton } from '../components/ui/GlassButton';
-import { GlassInput } from '../components/ui/GlassInput';
-import { NeonText } from '../components/ui/NeonText';
+import { Card } from '../components/ui/Card';
+import { Button } from '../components/ui/Button';
+import { Input } from '../components/ui/Input';
 import { LoadingSpinner } from '../components/ui/LoadingSpinner';
 
 export function Login() {
@@ -41,89 +38,79 @@ export function Login() {
   };
 
   return (
-    <div className="relative min-h-screen">
-      {/* Background layers */}
-      <AnimatedGradient variant="cyber" />
-      <GridBackground variant="hexagon" color="purple" />
-
-      <div className="relative z-10 container mx-auto px-4 py-16">
-        <div className="max-w-md mx-auto">
-          <h1 className="text-3xl font-bold text-center mb-8 font-tech">
-            <NeonText color="purple" intensity="medium">
-              {isRegister ? 'Create Account' : 'Welcome Back'}
-            </NeonText>
+    <div className="px-6 pt-[88px] pb-16">
+      <div className="max-w-[400px] mx-auto">
+        <Card radius={12} className="p-8">
+          <h1 className="text-[22px] leading-7 font-semibold tracking-[-0.01em]">
+            {isRegister ? 'Create account' : 'Welcome back'}
           </h1>
+          <p className="text-sm text-fg-secondary mt-1.5 mb-7">
+            {isRegister
+              ? 'Start turning your audio into visuals.'
+              : 'Sign in to your projects and exports.'}
+          </p>
 
-          <GlassCard glowColor="purple" variant="elevated" className="p-8">
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {error && (
-                <div className="p-4 rounded-lg bg-neon-pink/10 border border-neon-pink/30 text-neon-pink shadow-neon-pink">
-                  {error}
-                </div>
+          <form onSubmit={handleSubmit} className="space-y-[18px]">
+            {error && (
+              <div
+                className="p-3 rounded-md text-[13px]"
+                style={{
+                  color: 'var(--status-failed)',
+                  background: 'rgba(217, 95, 88, 0.1)',
+                  border: '1px solid rgba(217, 95, 88, 0.3)',
+                }}
+              >
+                {error}
+              </div>
+            )}
+
+            <Input
+              id="email"
+              label="Email"
+              type="email"
+              autoComplete="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              placeholder="you@example.com"
+            />
+
+            <Input
+              id="password"
+              label="Password"
+              type="password"
+              autoComplete="current-password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              minLength={8}
+              placeholder="••••••••"
+            />
+
+            <Button type="submit" disabled={loading} variant="primary" className="w-full py-[11px]">
+              {loading ? (
+                <>
+                  <LoadingSpinner size="sm" className="text-accent-on" />
+                  Loading...
+                </>
+              ) : isRegister ? (
+                'Create account'
+              ) : (
+                'Sign in'
               )}
+            </Button>
+          </form>
+        </Card>
 
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium mb-2 text-foreground">
-                  Email
-                </label>
-                <GlassInput
-                  id="email"
-                  type="email"
-                  autoComplete="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  glowColor="purple"
-                  placeholder="you@example.com"
-                />
-              </div>
-
-              <div>
-                <label htmlFor="password" className="block text-sm font-medium mb-2 text-foreground">
-                  Password
-                </label>
-                <GlassInput
-                  id="password"
-                  type="password"
-                  autoComplete="current-password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  minLength={8}
-                  glowColor="purple"
-                  placeholder="••••••••"
-                />
-              </div>
-
-              <GlassButton
-                type="submit"
-                disabled={loading}
-                variant="neon"
-                glowColor="purple"
-                className="w-full"
-              >
-                {loading ? (
-                  <>
-                    <LoadingSpinner color="purple" size="sm" />
-                    Loading...
-                  </>
-                ) : (
-                  isRegister ? 'Create Account' : 'Sign In'
-                )}
-              </GlassButton>
-            </form>
-
-            <p className="text-center mt-6 text-foreground/70">
-              {isRegister ? 'Already have an account?' : "Don't have an account?"}{' '}
-              <button
-                onClick={() => setIsRegister(!isRegister)}
-                className="text-neon-purple hover:text-neon-pink transition-colors drop-shadow-glow-sm"
-              >
-                {isRegister ? 'Sign In' : 'Register'}
-              </button>
-            </p>
-          </GlassCard>
-        </div>
+        <p className="text-center mt-5 text-sm text-fg-secondary">
+          {isRegister ? 'Already have an account?' : "Don't have an account?"}{' '}
+          <button
+            onClick={() => setIsRegister(!isRegister)}
+            className="text-accent font-medium hover:text-accent-hover transition-colors duration-150"
+          >
+            {isRegister ? 'Sign in' : 'Create one'}
+          </button>
+        </p>
       </div>
     </div>
   );

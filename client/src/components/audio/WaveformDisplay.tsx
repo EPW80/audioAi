@@ -4,7 +4,6 @@ import WaveSurfer from 'wavesurfer.js';
 interface WaveformDisplayProps {
   audioUrl: string;
   audioRef: React.RefObject<HTMLAudioElement | null>;
-  currentTime: number;
   duration: number;
   isPlaying: boolean;
   onSeek: (time: number) => void;
@@ -13,7 +12,6 @@ interface WaveformDisplayProps {
 export function WaveformDisplay({
   audioUrl,
   audioRef,
-  currentTime,
   duration,
   isPlaying,
   onSeek,
@@ -26,14 +24,14 @@ export function WaveformDisplay({
 
     const wavesurfer = WaveSurfer.create({
       container: containerRef.current,
-      waveColor: '#6366f1',
-      progressColor: '#4F46E5',
-      cursorColor: '#EC4899',
-      cursorWidth: 2,
-      height: 80,
+      waveColor: '#3A3A41',
+      progressColor: '#E8933A',
+      cursorColor: '#EDEDEF',
+      cursorWidth: 1.5,
+      height: 64,
       barWidth: 2,
       barGap: 1,
-      barRadius: 2,
+      barRadius: 1,
       normalize: true,
       interact: true,
       hideScrollbar: true,
@@ -72,19 +70,5 @@ export function WaveformDisplay({
     }
   }, [isPlaying]);
 
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
-  };
-
-  return (
-    <div className="w-full">
-      <div ref={containerRef} className="w-full" />
-      <div className="flex justify-between text-sm text-muted-foreground mt-2">
-        <span>{formatTime(currentTime)}</span>
-        <span>{formatTime(duration)}</span>
-      </div>
-    </div>
-  );
+  return <div ref={containerRef} className="w-full" />;
 }

@@ -25,6 +25,21 @@ export interface SDGenerationParams {
   seed?: number;
 }
 
+export interface SVDGenerationParams {
+  /** URL of the seed image (produced by SD) to animate */
+  image: string;
+  /** Number of frames to generate (default from env AI_SVD_NUM_FRAMES) */
+  numFrames?: number;
+  /** Motion intensity 1-255, higher = more motion (default from env AI_SVD_MOTION_BUCKET) */
+  motionBucketId?: number;
+  /** Output FPS (default from env AI_SVD_FPS) */
+  fps?: number;
+  /** Decode chunk size — lower = less VRAM, slower (default 8) */
+  decodeChunkSize?: number;
+  /** Override SVD model string (owner/model:version) */
+  svdModel?: string;
+}
+
 export interface ReplicatePrediction {
   id: string;
   status: 'starting' | 'processing' | 'succeeded' | 'failed' | 'canceled';
@@ -100,6 +115,99 @@ export async function downloadImageToPath(url: string, destPath: string): Promis
       file.on('error', reject);
     }).on('error', reject);
   });
+}
+
+/**
+ * Download a video file from a URL to a local path.
+ * Identical to downloadImageToPath but named distinctly for clarity.
+ */
+export async function downloadVideoToPath(url: string, destPath: string): Promise<void> {
+  await mkdir(path.dirname(destPath), { recursive: true });
+  return new Promise((resolve, reject) => {
+    const protocol = url.startsWith('https') ? https : http;
+    const file = createWriteStream(destPath);
+    protocol.get(url, (res) => {
+      res.pipe(file);
+      file.on('finish', () => file.close(() => resolve()));
+      file.on('error', reject);
+    }).on('error', reject);
+  });
+}
+
+/**
+ * Generate a short video clip from a seed image using Stable Video Diffusion (SVD)
+ * via the Replicate API.  Returns a prediction that must be polled with waitForPrediction().
+ */
+export async function generateVideo(params: SVDGenerationParams): Promise<ReplicatePrediction> {
+  const client = getClient();
+
+  const modelStr = params.svdModel || env.AI_SVD_MODEL;
+  const [_owner, modelAndVersion] = modelStr.split('/');
+  const [_model, version] = modelAndVersion.split(':');
+
+  const prediction = await client.predictions.create({
+    version,
+    input: {
+      image: params.image,
+      num_frames: params.numFrames ?? parseInt(env.AI_SVD_NUM_FRAMES),
+      motion_bucket_id: params.motionBucketId ?? parseInt(env.AI_SVD_MOTION_BUCKET),
+      fps: params.fps ?? parseInt(env.AI_SVD_FPS),
+      decode_chunk_size: params.decodeChunkSize ?? 8,
+    },
+  });
+
+  return {
+    id: prediction.id,
+    status: prediction.status as ReplicatePrediction['status'],
+    output: prediction.output as string[] | undefined,
+    error: prediction.error as string | undefined,
+  };
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Frame Interpolation via FILM model (for 'interpolate' transition mode)
+// ─────────────────────────────────────────────────────────────────────────────
+
+export interface FrameInterpolationParams {
+  /** URL of the first frame */
+  frame1: string;
+  /** URL of the second frame */
+  frame2: string;
+  /** Number of interpolated frames to produce between the two inputs (default 2) */
+  numInterpolationSteps?: number;
+}
+
+/**
+ * Generate interpolated frames between two images using Google's FILM model
+ * on Replicate. Returns an array of URLs for the interpolated frames (excludes
+ * the original inputs).
+ */
+export async function generateFrameInterpolation(
+  params: FrameInterpolationParams
+): Promise<string[]> {
+  const client = getClient();
+
+  // FILM model on Replicate
+  const filmModel =
+    'google-research/frame-interpolation:4f88a16a13673a8b589c18866e540556170a5bcb2ccdc12de556e800e9456d3d';
+  const [_owner, modelAndVersion] = filmModel.split('/');
+  const [_model, version] = modelAndVersion.split(':');
+
+  const prediction = await client.predictions.create({
+    version,
+    input: {
+      frame1: params.frame1,
+      frame2: params.frame2,
+      times_to_interpolate: params.numInterpolationSteps ?? 2,
+    },
+  });
+
+  // Wait for completion (interpolation is fast — 60s timeout)
+  const outputUrl = await waitForPrediction(prediction.id, 60_000);
+
+  // FILM returns a single .mp4 video or a list of frame URLs depending on version.
+  // We return as an array for consistent handling.
+  return [outputUrl];
 }
 
 // Run N async tasks with a concurrency cap

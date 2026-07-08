@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="crossorigin">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    body { margin: 0; background: #141416; }
+    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+  </style>
+</helmet>
+<div data-screen-label="Projects (redesign)" style="min-height: 100vh; background: #141416; color: #EDEDEF; font-family: 'IBM Plex Sans', system-ui, sans-serif; display: flex; flex-direction: column;">
+
+  <!-- Header -->
+  <header style="background: #1B1B1E; border-bottom: 1px solid #2A2A2F;">
+    <div style="max-width: 1120px; margin: 0 auto; padding: 0 24px; height: 56px; display: flex; align-items: center; justify-content: space-between;">
+      <a href="#" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: #EDEDEF;">
+        <span style="display: flex; align-items: center; justify-content: center; width: 26px; height: 26px; border-radius: 6px; background: #E8933A;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; width: 15px; height: 15px; color: #191006;"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg></span>
+        <span style="font-size: 15px; font-weight: 600; letter-spacing: -0.01em;">AudioAI</span>
+      </a>
+      <nav style="display: flex; align-items: center; gap: 12px;">
+        <button style="white-space: nowrap; display: flex; align-items: center; gap: 6px; font-weight: 500; font-size: 13px; line-height: 20px; padding: 7px 12px; border-radius: 6px; background: #232327; color: #EDEDEF; border: 1px solid #2A2A2F; cursor: pointer; transition: all 0.15s; font-family: 'IBM Plex Sans', sans-serif;" style-hover="border-color: #3A3A41;">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; width: 14px; height: 14px;"><path d="m6 14 1.5-2.9A2 2 0 0 1 9.24 10H20a2 2 0 0 1 1.94 2.5l-1.54 6a2 2 0 0 1-1.95 1.5H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3.9a2 2 0 0 1 1.69.9l.81 1.2a2 2 0 0 0 1.67.9H18a2 2 0 0 1 2 2v2"></path></svg>
+          Projects
+        </button>
+        <span style="color: #6C6C74; font-family: 'IBM Plex Mono', monospace; font-size: 12px; line-height: 18px;">demo@audioai.io</span>
+        <button style="white-space: nowrap; display: flex; align-items: center; gap: 6px; font-weight: 500; font-size: 13px; line-height: 20px; padding: 7px 12px; border-radius: 6px; background: transparent; color: #A3A3AB; border: 1px solid transparent; cursor: pointer; transition: all 0.15s; font-family: 'IBM Plex Sans', sans-serif;" style-hover="color: #EDEDEF; background: #232327;">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; width: 14px; height: 14px;"><path d="m16 17 5-5-5-5"></path><path d="M21 12H9"></path><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path></svg>
+          Log out
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Content -->
+  <div style="max-width: 1120px; margin: 0 auto; padding: 40px 24px; width: 100%; box-sizing: border-box;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px;">
+      <div>
+        <h1 style="font-size: 24px; line-height: 30px; font-weight: 600; margin: 0; letter-spacing: -0.015em;">Projects</h1>
+        <p style="font-size: 13px; line-height: 18px; color: #6C6C74; margin: 4px 0 0 0;">{{ projectCount }} projects</p>
+      </div>
+      <button style="white-space: nowrap; display: flex; align-items: center; gap: 8px; padding: 9px 16px; border-radius: 6px; background: #E8933A; color: #191006; border: none; cursor: pointer; font-size: 14px; line-height: 20px; font-weight: 600; transition: background 0.15s; font-family: 'IBM Plex Sans', sans-serif;" style-hover="background: #F2A44E;">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; width: 16px; height: 16px;"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>
+        New project
+      </button>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;">
+      <sc-for list="{{ projects }}" as="proj" hint-placeholder-count="6">
+        <div onMouseEnter="{{ proj.enter }}" onMouseLeave="{{ proj.leave }}" style="padding: 18px; border-radius: 10px; background: #1B1B1E; border: 1px solid #2A2A2F; transition: border-color 0.15s; cursor: pointer;" style-hover="border-color: #45454C;">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; gap: 8px;">
+            <h3 style="font-weight: 600; margin: 0; font-size: 15px; line-height: 21px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; letter-spacing: -0.005em;">{{ proj.name }}</h3>
+            <button style="padding: 4px; border-radius: 4px; background: transparent; border: none; color: #6C6C74; cursor: pointer; opacity: {{ proj.trashOpacity }}; transition: all 0.15s; display: flex;" style-hover="background: rgba(217,95,88,0.15); color: #D95F58;">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; width: 15px; height: 15px;"><path d="M10 11v6"></path><path d="M14 11v6"></path><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path><path d="M3 6h18"></path><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+            </button>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px; font-size: 13px; line-height: 18px; color: #A3A3AB;">
+            <span style="width: 7px; height: 7px; border-radius: 50%; background: {{ proj.statusColor }}; flex-shrink: 0; animation: {{ proj.statusAnim }};"></span>
+            <span style="text-transform: capitalize;">{{ proj.status }}</span>
+            <sc-if value="{{ proj.styleBadge }}" hint-placeholder-val="{{ false }}">
+              <span style="padding: 2px 7px; border-radius: 4px; font-family: 'IBM Plex Mono', monospace; font-size: 10px; line-height: 14px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; background: #232327; border: 1px solid #2A2A2F; color: #A3A3AB;">{{ proj.styleBadge }}</span>
+            </sc-if>
+            <span style="margin-left: auto; white-space: nowrap; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #6C6C74;">{{ proj.date }}</span>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;: {&quot;width&quot;: 1440, &quot;height&quot;: 800}}">
+class Component extends DCLogic {
+  state = { hovered: -1 };
+  renderVals() {
+    const colors = {
+      uploaded: '#CFAF52',
+      analyzing: '#5C9CD6',
+      ready: '#55B36E',
+      rendering: '#E8933A',
+      complete: '#55B36E',
+      failed: '#D95F58',
+    };
+    const pulse = { analyzing: 'pulse 1.2s ease-in-out infinite', rendering: 'pulse 1.2s ease-in-out infinite' };
+    const data = [
+      { name: 'midnight-drive', status: 'ready', date: '2026-07-01', style: null },
+      { name: 'summer-anthem-final-mix', status: 'complete', date: '2026-06-28', style: 'nebula' },
+      { name: 'lofi-study-loop', status: 'rendering', date: '2026-06-27', style: 'cyberpunk' },
+      { name: 'demo-track-03', status: 'analyzing', date: '2026-06-25', style: null },
+      { name: 'ocean-breaks', status: 'uploaded', date: '2026-06-21', style: 'ocean' },
+      { name: 'glitch-experiment', status: 'failed', date: '2026-06-14', style: null },
+    ];
+    const projects = data.map((p, i) => ({
+      name: p.name,
+      status: p.status,
+      date: p.date,
+      styleBadge: p.style,
+      statusColor: colors[p.status],
+      statusAnim: pulse[p.status] || 'none',
+      trashOpacity: this.state.hovered === i ? 1 : 0,
+      enter: () => this.setState({ hovered: i }),
+      leave: () => this.setState({ hovered: -1 }),
+    }));
+    return { projects, projectCount: data.length };
+  }
+}
+</script>
+</body>
+</html>

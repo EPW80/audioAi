@@ -111,7 +111,7 @@ export async function updateAISettings(req: AuthRequest, res: Response): Promise
       return;
     }
 
-    const allowedFields: (keyof IAISettings)[] = ['mode', 'sdPrompt', 'sdNegativePrompt', 'sdModel'];
+    const allowedFields: (keyof IAISettings)[] = ['mode', 'sdPrompt', 'sdNegativePrompt', 'sdModel', 'transitionMode', 'autoVaryPrompts'];
     const patch: Record<string, unknown> = {};
     for (const field of allowedFields) {
       if (field in updates) {

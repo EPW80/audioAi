@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="crossorigin">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    body { margin: 0; background: #141416; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+    input[type="range"].rd-slider { -webkit-appearance: none; appearance: none; height: 4px; border-radius: 2px; background: #2A2A2F; outline: none; }
+    input[type="range"].rd-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 14px; height: 14px; border-radius: 50%; background: #E8933A; cursor: pointer; border: none; }
+    input[type="range"].rd-slider::-moz-range-thumb { width: 14px; height: 14px; border-radius: 50%; background: #E8933A; cursor: pointer; border: none; }
+  </style>
+</helmet>
+<div data-screen-label="Editor (redesign)" style="height: 100vh; background: #141416; color: #EDEDEF; font-family: 'IBM Plex Sans', system-ui, sans-serif; display: flex; flex-direction: column; overflow: hidden;">
+
+  <!-- Top bar -->
+  <div style="height: 52px; flex-shrink: 0; background: #1B1B1E; border-bottom: 1px solid #2A2A2F; display: flex; align-items: center; justify-content: space-between; padding: 0 12px;">
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <button style="padding: 7px; border-radius: 6px; background: transparent; border: none; color: #A3A3AB; cursor: pointer; transition: all 0.15s; display: flex;" style-hover="background: #232327; color: #EDEDEF;">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; width: 17px; height: 17px;"><path d="m12 19-7-7 7-7"></path><path d="M19 12H5"></path></svg>
+      </button>
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <span style="display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 5px; background: #E8933A;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; width: 14px; height: 14px; color: #191006;"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg></span>
+        <h1 style="font-weight: 600; margin: 0; font-size: 14px; line-height: 20px; white-space: nowrap; letter-spacing: -0.005em;">midnight-drive</h1>
+        <span style="padding: 2px 8px; border-radius: 4px; font-family: 'IBM Plex Mono', monospace; font-size: 10px; line-height: 14px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; background: rgba(85,179,110,0.12); color: #55B36E;">Ready</span>
+      </div>
+    </div>
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <span style="white-space: nowrap; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #6C6C74; margin-right: 4px;">128 BPM · 03:47</span>
+      <button onClick="{{ toggleSettings }}" style="padding: 7px; border-radius: 6px; background: {{ settingsBtnBg }}; border: 1px solid {{ settingsBtnBorder }}; color: {{ settingsBtnColor }}; cursor: pointer; transition: all 0.15s; display: flex;" style-hover="color: #EDEDEF;">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; width: 17px; height: 17px;"><path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915"></path><circle cx="12" cy="12" r="3"></circle></svg>
+      </button>
+      <button style="white-space: nowrap; display: flex; align-items: center; gap: 7px; padding: 7px 14px; border-radius: 6px; background: #E8933A; color: #191006; border: none; cursor: pointer; font-size: 13px; line-height: 20px; font-weight: 600; transition: background 0.15s; font-family: 'IBM Plex Sans', sans-serif;" style-hover="background: #F2A44E;">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; width: 14px; height: 14px;"><path d="M12 15V3"></path><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><path d="m7 10 5 5 5-5"></path></svg>
+        Export
+      </button>
+    </div>
+  </div>
+
+  <!-- Main: viewport + panel -->
+  <div style="flex: 1; min-height: 0; display: flex;">
+    <!-- Viewport -->
+    <div style="flex: 1; min-width: 0; padding: 12px; display: flex;">
+      <div style="flex: 1; background: #0F0F11; border: 1px solid #2A2A2F; border-radius: 8px; overflow: hidden; position: relative;">
+        <sc-for list="{{ sceneDots }}" as="d" hint-placeholder-count="0">
+          <div style="position: absolute; left: {{ d.left }}%; top: {{ d.top }}%; width: {{ d.size }}px; height: {{ d.size }}px; border-radius: 50%; background: {{ d.color }}; opacity: {{ d.opacity }}; box-shadow: 0 0 4px {{ d.color }};"></div>
+        </sc-for>
+        <div style="position: absolute; top: 10px; left: 12px; font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: #6C6C74;">Preview · Particles</div>
+        <div style="position: absolute; bottom: 10px; right: 12px; font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #6C6C74;">720p · 30 fps</div>
+      </div>
+    </div>
+
+    <!-- Settings panel -->
+    <sc-if value="{{ showSettings }}" hint-placeholder-val="{{ true }}">
+      <div style="width: 300px; flex-shrink: 0; border-left: 1px solid #2A2A2F; display: flex; flex-direction: column; background: #1B1B1E;">
+        <!-- Tabs -->
+        <div style="display: flex; border-bottom: 1px solid #2A2A2F; padding: 0 8px;">
+          <button onClick="{{ tabStyle }}" style="flex: 1; padding: 11px 0 9px 0; font-size: 13px; line-height: 18px; font-weight: 500; background: none; border: none; border-bottom: 2px solid {{ styleTabBorder }}; color: {{ styleTabColor }}; cursor: pointer; transition: color 0.15s; font-family: 'IBM Plex Sans', sans-serif;">
+            <span style="display: flex; align-items: center; justify-content: center; gap: 6px;">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; width: 13px; height: 13px;"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"></path><path d="M20 2v4"></path><path d="M22 4h-4"></path><circle cx="4" cy="20" r="2"></circle></svg>
+              Style
+            </span>
+          </button>
+          <button onClick="{{ tabParams }}" style="flex: 1; padding: 11px 0 9px 0; font-size: 13px; line-height: 18px; font-weight: 500; background: none; border: none; border-bottom: 2px solid {{ paramsTabBorder }}; color: {{ paramsTabColor }}; cursor: pointer; transition: color 0.15s; font-family: 'IBM Plex Sans', sans-serif;">
+            <span style="display: flex; align-items: center; justify-content: center; gap: 6px;">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; width: 13px; height: 13px;"><path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915"></path><circle cx="12" cy="12" r="3"></circle></svg>
+              Params
+            </span>
+          </button>
+          <button onClick="{{ tabAi }}" style="flex: 1; padding: 11px 0 9px 0; font-size: 13px; line-height: 18px; font-weight: 500; background: none; border: none; border-bottom: 2px solid {{ aiTabBorder }}; color: {{ aiTabColor }}; cursor: pointer; transition: color 0.15s; font-family: 'IBM Plex Sans', sans-serif;">
+            <span style="display: flex; align-items: center; justify-content: center; gap: 6px;">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; width: 13px; height: 13px;"><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72"></path><path d="m14 7 3 3"></path><path d="M5 6v4"></path><path d="M19 14v4"></path><path d="M10 2v2"></path><path d="M7 8H3"></path><path d="M21 16h-4"></path><path d="M11 3H9"></path></svg>
+              AI
+            </span>
+          </button>
+        </div>
+
+        <div style="flex: 1; overflow-y: auto; overflow-x: hidden; padding: 14px; display: flex; flex-direction: column; gap: 14px;">
+          <!-- Style tab -->
+          <sc-if value="{{ isStyleTab }}" hint-placeholder-val="{{ true }}">
+            <p style="font-size: 12px; line-height: 17px; color: #6C6C74; margin: 0;">Choose a visual preset. Parameters update to match.</p>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <sc-for list="{{ presets }}" as="preset" hint-placeholder-count="7">
+                <button onClick="{{ preset.select }}" style="box-sizing: border-box; width: 100%; text-align: left; padding: 10px 12px; border-radius: 8px; border: 1px solid {{ preset.border }}; background: {{ preset.bg }}; cursor: pointer; transition: all 0.15s; color: #EDEDEF; font-family: 'IBM Plex Sans', sans-serif;" style-hover="border-color: #45454C;">
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <div style="display: flex; gap: 3px;">
+                      <div style="width: 10px; height: 10px; border-radius: 3px; background: {{ preset.c1 }};"></div>
+                      <div style="width: 10px; height: 10px; border-radius: 3px; background: {{ preset.c2 }};"></div>
+                      <div style="width: 10px; height: 10px; border-radius: 3px; background: {{ preset.c3 }};"></div>
+                    </div>
+                    <div style="font-weight: 600; font-size: 13px; line-height: 18px;">{{ preset.name }}</div>
+                    <sc-if value="{{ preset.isActive }}" hint-placeholder-val="{{ false }}">
+                      <span style="margin-left: auto; font-family: 'IBM Plex Mono', monospace; font-size: 9px; line-height: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: #E8933A;">Active</span>
+                    </sc-if>
+                  </div>
+                  <div style="font-size: 12px; line-height: 17px; color: #6C6C74; margin-top: 4px;">{{ preset.description }}</div>
+                </button>
+              </sc-for>
+            </div>
+          </sc-if>
+
+          <!-- Params tab -->
+          <sc-if value="{{ isParamsTab }}" hint-placeholder-val="{{ false }}">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px;">
+                <label style="font-size: 13px; line-height: 18px; font-weight: 500; color: #A3A3AB;">Particle count</label>
+                <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #EDEDEF;">{{ particleCount }}</span>
+              </div>
+              <input type="range" class="rd-slider" min="500" max="5000" step="100" value="{{ particleCount }}" onChange="{{ setParticleCount }}" style="width: 100%;">
+            </div>
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px;">
+                <label style="font-size: 13px; line-height: 18px; font-weight: 500; color: #A3A3AB;">Intensity</label>
+                <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #EDEDEF;">{{ intensityLabel }}</span>
+              </div>
+              <input type="range" class="rd-slider" min="0.1" max="2" step="0.1" value="{{ intensity }}" onChange="{{ setIntensity }}" style="width: 100%;">
+            </div>
+            <div>
+              <label style="display: block; font-size: 13px; line-height: 18px; font-weight: 500; color: #A3A3AB; margin-bottom: 8px;">Colors</label>
+              <div style="display: flex; gap: 8px;">
+                <div style="width: 34px; height: 34px; border-radius: 6px; background: #4F46E5; border: 1px solid #2A2A2F; cursor: pointer;"></div>
+                <div style="width: 34px; height: 34px; border-radius: 6px; background: #7C3AED; border: 1px solid #2A2A2F; cursor: pointer;"></div>
+                <div style="width: 34px; height: 34px; border-radius: 6px; background: #EC4899; border: 1px solid #2A2A2F; cursor: pointer;"></div>
+              </div>
+            </div>
+            <div>
+              <label style="display: block; font-size: 13px; line-height: 18px; font-weight: 500; color: #A3A3AB; margin-bottom: 8px;">Export resolution</label>
+              <div style="display: flex; background: #101012; border: 1px solid #2A2A2F; border-radius: 6px; padding: 2px; gap: 2px;">
+                <button style="flex: 1; padding: 6px 0; border-radius: 4px; font-size: 12px; line-height: 17px; font-weight: 600; background: #232327; color: #EDEDEF; border: none; cursor: pointer; font-family: 'IBM Plex Mono', monospace;">720p</button>
+                <button style="flex: 1; padding: 6px 0; border-radius: 4px; font-size: 12px; line-height: 17px; font-weight: 500; background: transparent; color: #6C6C74; border: none; cursor: pointer; transition: color 0.15s; font-family: 'IBM Plex Mono', monospace;" style-hover="color: #A3A3AB;">1080p</button>
+              </div>
+            </div>
+          </sc-if>
+
+          <!-- AI tab -->
+          <sc-if value="{{ isAiTab }}" hint-placeholder-val="{{ false }}">
+            <div style="display: flex; flex-direction: column; gap: 14px;">
+              <div style="display: flex; align-items: center; justify-content: space-between;">
+                <h3 style="font-size: 13px; line-height: 18px; font-weight: 600; margin: 0;">Style suggestions</h3>
+                <button style="font-size: 12px; line-height: 17px; color: #E8933A; background: none; border: none; cursor: pointer; display: flex; align-items: center; gap: 4px; font-weight: 500; transition: color 0.15s; font-family: 'IBM Plex Sans', sans-serif;" style-hover="color: #F2A44E;">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; width: 11px; height: 11px;"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path><path d="M21 3v5h-5"></path><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path><path d="M8 16H3v5"></path></svg>
+                  Refresh
+                </button>
+              </div>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 12px; line-height: 17px; color: #6C6C74;">Mood</span>
+                <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; line-height: 15px; letter-spacing: 0.06em; text-transform: uppercase; padding: 2px 8px; border-radius: 4px; background: #232327; border: 1px solid #2A2A2F; color: #A3A3AB;">energetic synthwave</span>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 8px;">
+                <div style="border-radius: 8px; background: #161618; border: 1px solid #2A2A2F; padding: 12px; display: flex; flex-direction: column; gap: 8px;">
+                  <div style="display: flex; align-items: center; justify-content: space-between;">
+                    <span style="font-size: 13px; line-height: 18px; font-weight: 600; text-transform: capitalize;">cyberpunk</span>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                      <div style="width: 56px; height: 4px; border-radius: 2px; background: #2A2A2F; overflow: hidden;"><div style="height: 100%; border-radius: 2px; background: #E8933A; width: 92%;"></div></div>
+                      <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #6C6C74;">92%</span>
+                    </div>
+                  </div>
+                  <div style="display: flex; gap: 4px;">
+                    <div style="width: 16px; height: 16px; border-radius: 4px; border: 1px solid #2A2A2F; background: #F0ABFC;"></div>
+                    <div style="width: 16px; height: 16px; border-radius: 4px; border: 1px solid #2A2A2F; background: #22D3EE;"></div>
+                    <div style="width: 16px; height: 16px; border-radius: 4px; border: 1px solid #2A2A2F; background: #4ADE80;"></div>
+                  </div>
+                  <p style="font-size: 12px; line-height: 18px; color: #A3A3AB; margin: 0;">Driving bassline and bright synth stabs suit a neon grid that ripples with the mids.</p>
+                  <button style="align-self: flex-start; white-space: nowrap; font-size: 12px; line-height: 17px; font-weight: 600; color: #E8933A; background: none; border: none; cursor: pointer; padding: 0; transition: color 0.15s; font-family: 'IBM Plex Sans', sans-serif;" style-hover="color: #F2A44E;">Apply style</button>
+                </div>
+                <div style="border-radius: 8px; background: #161618; border: 1px solid #2A2A2F; padding: 12px; display: flex; flex-direction: column; gap: 8px;">
+                  <div style="display: flex; align-items: center; justify-content: space-between;">
+                    <span style="font-size: 13px; line-height: 18px; font-weight: 600; text-transform: capitalize;">particles</span>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                      <div style="width: 56px; height: 4px; border-radius: 2px; background: #2A2A2F; overflow: hidden;"><div style="height: 100%; border-radius: 2px; background: #E8933A; width: 74%;"></div></div>
+                      <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #6C6C74;">74%</span>
+                    </div>
+                  </div>
+                  <div style="display: flex; gap: 4px;">
+                    <div style="width: 16px; height: 16px; border-radius: 4px; border: 1px solid #2A2A2F; background: #4F46E5;"></div>
+                    <div style="width: 16px; height: 16px; border-radius: 4px; border: 1px solid #2A2A2F; background: #7C3AED;"></div>
+                    <div style="width: 16px; height: 16px; border-radius: 4px; border: 1px solid #2A2A2F; background: #EC4899;"></div>
+                  </div>
+                  <p style="font-size: 12px; line-height: 18px; color: #A3A3AB; margin: 0;">Steady four-on-the-floor kick maps well to bass-pulsed particle bursts.</p>
+                  <button style="align-self: flex-start; white-space: nowrap; font-size: 12px; line-height: 17px; font-weight: 600; color: #E8933A; background: none; border: none; cursor: pointer; padding: 0; transition: color 0.15s; font-family: 'IBM Plex Sans', sans-serif;" style-hover="color: #F2A44E;">Apply style</button>
+                </div>
+              </div>
+
+              <div style="display: flex; flex-direction: column; gap: 12px; padding-top: 14px; border-top: 1px solid #2A2A2F;">
+                <h3 style="font-size: 13px; line-height: 18px; font-weight: 600; margin: 0;">Generation mode</h3>
+                <div style="display: flex; background: #101012; border: 1px solid #2A2A2F; border-radius: 6px; padding: 2px; gap: 2px;">
+                  <button style="flex: 1; padding: 6px 0; border-radius: 4px; font-size: 12px; line-height: 17px; font-weight: 600; background: #232327; color: #EDEDEF; border: none; cursor: pointer; font-family: 'IBM Plex Sans', sans-serif;">Procedural</button>
+                  <button style="flex: 1; padding: 6px 0; border-radius: 4px; font-size: 12px; line-height: 17px; font-weight: 500; background: transparent; color: #6C6C74; border: none; cursor: pointer; transition: color 0.15s; font-family: 'IBM Plex Sans', sans-serif;" style-hover="color: #A3A3AB;">AI hybrid</button>
+                </div>
+                <p style="font-size: 12px; line-height: 18px; color: #6C6C74; margin: 0;">Uses Three.js procedural visualization for export. Fast and always available.</p>
+                <button style="white-space: nowrap; width: 100%; display: flex; align-items: center; justify-content: center; gap: 7px; padding: 8px 0; border-radius: 6px; background: #232327; color: #EDEDEF; font-size: 12px; line-height: 17px; font-weight: 600; border: 1px solid #2A2A2F; cursor: pointer; transition: border-color 0.15s; font-family: 'IBM Plex Sans', sans-serif;" style-hover="border-color: #3A3A41;">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; width: 12px; height: 12px;"><path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"></path><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"></path><path d="M7 3v4a1 1 0 0 0 1 1h7"></path></svg>
+                  Save AI settings
+                </button>
+              </div>
+            </div>
+          </sc-if>
+        </div>
+
+        <div style="padding: 12px 14px; border-top: 1px solid #2A2A2F;">
+          <button style="white-space: nowrap; width: 100%; padding: 9px 0; border-radius: 6px; background: #E8933A; color: #191006; border: none; cursor: pointer; font-size: 13px; line-height: 19px; font-weight: 600; transition: background 0.15s; font-family: 'IBM Plex Sans', sans-serif;" style-hover="background: #F2A44E;">Save settings</button>
+        </div>
+      </div>
+    </sc-if>
+  </div>
+
+  <!-- Bottom: timeline + transport -->
+  <div style="flex-shrink: 0; background: #1B1B1E; border-top: 1px solid #2A2A2F; padding: 12px 16px 14px 16px; display: flex; flex-direction: column; gap: 10px;">
+    <!-- Timeline header -->
+    <div style="display: flex; align-items: center; justify-content: space-between;">
+      <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; line-height: 15px; color: #6C6C74; font-weight: 500; text-transform: uppercase; letter-spacing: 0.1em;">Timeline</span>
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <button style="white-space: nowrap; display: flex; align-items: center; gap: 5px; font-size: 12px; line-height: 17px; font-weight: 500; padding: 4px 10px; border-radius: 5px; background: #232327; color: #EDEDEF; border: 1px solid #3A3A41; cursor: pointer; font-family: 'IBM Plex Sans', sans-serif;">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; width: 11px; height: 11px;"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
+          Beats
+        </button>
+        <label style="display: flex; align-items: center; gap: 5px; font-size: 12px; line-height: 17px; color: #A3A3AB; cursor: pointer;">
+          <input type="checkbox" checked="{{ true }}" onChange="{{ noop }}" style="width: 13px; height: 13px; accent-color: #E8933A;">
+          Snap
+        </label>
+        <button style="white-space: nowrap; display: flex; align-items: center; gap: 5px; font-size: 12px; line-height: 17px; font-weight: 600; padding: 4px 10px; border-radius: 5px; background: rgba(232,147,58,0.12); color: #E8933A; border: 1px solid rgba(232,147,58,0.25); cursor: pointer; transition: background 0.15s; font-family: 'IBM Plex Sans', sans-serif;" style-hover="background: rgba(232,147,58,0.2);">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; width: 11px; height: 11px;"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>
+          Add keyframe
+        </button>
+      </div>
+    </div>
+    <!-- Rail -->
+    <div style="position: relative; height: 36px; background: #101012; border: 1px solid #2A2A2F; border-radius: 6px; cursor: pointer; user-select: none; overflow: hidden;">
+      <div style="position: absolute; inset: 0; pointer-events: none; background-image: linear-gradient(90deg, #26262B 0, #26262B 1px, transparent 1px); background-size: 1.1% 100%;"></div>
+      <div style="position: absolute; top: 0; left: 0; height: 100%; background: rgba(232,147,58,0.08); pointer-events: none; width: 36.6%;"></div>
+      <div style="position: absolute; top: 0; bottom: 0; width: 2px; background: #E8933A; pointer-events: none; left: 36.6%;"></div>
+      <div style="position: absolute; top: 14px; left: 5.3%; width: 8px; height: 8px; border-radius: 2px; background: #E8933A; border: 1px solid #1B1B1E; transform: translateX(-50%) rotate(45deg); pointer-events: none;"></div>
+      <div style="position: absolute; top: 14px; left: 25.6%; width: 8px; height: 8px; border-radius: 2px; background: #E8933A; border: 1px solid #1B1B1E; transform: translateX(-50%) rotate(45deg); pointer-events: none;"></div>
+      <div style="position: absolute; top: 14px; left: 61.7%; width: 8px; height: 8px; border-radius: 2px; background: #E8933A; border: 1px solid #1B1B1E; transform: translateX(-50%) rotate(45deg); pointer-events: none;"></div>
+      <div style="position: absolute; bottom: 2px; left: 6px; font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: #6C6C74; pointer-events: none;">0:00</div>
+      <div style="position: absolute; bottom: 2px; right: 6px; font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: #6C6C74; pointer-events: none;">3:47</div>
+    </div>
+    <!-- Keyframe chips -->
+    <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+      <sc-for list="{{ kfs }}" as="kf" hint-placeholder-count="3">
+        <div style="display: flex; align-items: center; gap: 8px; font-size: 12px; line-height: 17px; padding: 4px 8px; border-radius: 5px; background: #232327; border: 1px solid #2A2A2F; transition: border-color 0.15s;" style-hover="border-color: #3A3A41;">
+          <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #E8933A;">{{ kf.time }}</span>
+          <div style="display: flex; gap: 3px; align-items: center;">
+            <div style="width: 9px; height: 9px; border-radius: 3px; background: {{ kf.c1 }};"></div>
+            <div style="width: 9px; height: 9px; border-radius: 3px; background: {{ kf.c2 }};"></div>
+            <div style="width: 9px; height: 9px; border-radius: 3px; background: {{ kf.c3 }};"></div>
+          </div>
+          <span style="text-transform: capitalize; color: #A3A3AB;">{{ kf.style }}</span>
+          <button style="padding: 2px; border-radius: 3px; background: transparent; border: none; color: #6C6C74; cursor: pointer; display: flex; transition: all 0.15s;" style-hover="color: #D95F58;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; width: 11px; height: 11px;"><path d="M10 11v6"></path><path d="M14 11v6"></path><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path><path d="M3 6h18"></path><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+          </button>
+        </div>
+      </sc-for>
+    </div>
+    <!-- Transport + waveform -->
+    <div style="display: flex; align-items: center; gap: 14px;">
+      <button style="width: 44px; height: 44px; border-radius: 50%; background: #E8933A; color: #191006; border: none; cursor: pointer; flex-shrink: 0; transition: background 0.15s; display: flex; align-items: center; justify-content: center;" style-hover="background: #F2A44E;">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; width: 20px; height: 20px; margin-left: 2px;"><path d="M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z"></path></svg>
+      </button>
+      <span style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: #EDEDEF; flex-shrink: 0;">1:23<span style="color: #6C6C74;"> / 3:47</span></span>
+      <div style="flex: 1; min-width: 0; position: relative; height: 64px;">
+        <div style="display: flex; align-items: center; gap: 1px; height: 64px; overflow: hidden;">
+          <sc-for list="{{ bars }}" as="bar" hint-placeholder-count="0">
+            <div style="flex: 1; min-width: 0; border-radius: 1px; height: {{ bar.h }}px; background: {{ bar.color }};"></div>
+          </sc-for>
+        </div>
+        <div style="position: absolute; top: 0; bottom: 0; width: 1.5px; background: #EDEDEF; left: 36.6%; pointer-events: none;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;: {&quot;width&quot;: 1440, &quot;height&quot;: 900}, &quot;panelOpen&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Layout&quot;}}">
+class Component extends DCLogic {
+  state = { activeTab: 'style', showSettings: true, activePreset: 'particles', particleCount: 2000, intensity: 1.0 };
+
+  renderVals() {
+    const s = this.state;
+    const showSettings = this.props.panelOpen ?? s.showSettings;
+    const PRESETS = [
+      { id: 'particles', name: 'Particles', description: 'Spherical burst of particles that pulse to the bass', colors: ['#4F46E5', '#7C3AED', '#EC4899'] },
+      { id: 'waveform', name: 'Waveform', description: '3D equalizer bars that scale with the frequency spectrum', colors: ['#06B6D4', '#0EA5E9', '#38BDF8'] },
+      { id: 'nebula', name: 'Nebula', description: 'Soft space-cloud glow that breathes with the music', colors: ['#8B5CF6', '#A78BFA', '#C4B5FD'] },
+      { id: 'cyberpunk', name: 'Cyberpunk', description: 'Neon grid that ripples with mid-frequencies', colors: ['#F0ABFC', '#22D3EE', '#4ADE80'] },
+      { id: 'aurora', name: 'Aurora', description: 'Flowing color ribbons driven by treble frequencies', colors: ['#34D399', '#6EE7B7', '#A7F3D0'] },
+      { id: 'fractal', name: 'Fractal', description: 'Mandelbrot fractals that zoom and morph with the beat', colors: ['#F59E0B', '#EF4444', '#8B5CF6'] },
+      { id: 'ocean', name: 'Ocean', description: 'Rolling ocean waves driven by bass frequencies', colors: ['#0369A1', '#0EA5E9', '#7DD3FC'] },
+    ];
+    const presets = PRESETS.map((p) => ({
+      name: p.name,
+      description: p.description,
+      c1: p.colors[0], c2: p.colors[1], c3: p.colors[2],
+      isActive: s.activePreset === p.id,
+      border: s.activePreset === p.id ? 'rgba(232,147,58,0.45)' : '#2A2A2F',
+      bg: s.activePreset === p.id ? 'rgba(232,147,58,0.07)' : '#161618',
+      select: () => this.setState({ activePreset: p.id }),
+    }));
+
+    let seed = 7;
+    const rnd = () => { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; };
+    const palette = ['#4F46E5', '#7C3AED', '#EC4899'];
+    const sceneDots = [];
+    for (let i = 0; i < 180; i++) {
+      const ang = rnd() * Math.PI * 2;
+      const r = Math.sqrt(rnd()) * 30;
+      sceneDots.push({
+        left: Math.round((50 + Math.cos(ang) * r * 0.75) * 10) / 10,
+        top: Math.round((50 + Math.sin(ang) * r) * 10) / 10,
+        size: Math.round((rnd() * 2.5 + 1.5) * 10) / 10,
+        color: palette[Math.floor(rnd() * 3)],
+        opacity: Math.round((rnd() * 0.5 + 0.3) * 100) / 100,
+      });
+    }
+
+    let s2 = 99;
+    const rnd2 = () => { s2 = (s2 * 16807) % 2147483647; return (s2 - 1) / 2147483646; };
+    const bars = [];
+    const total = 260;
+    let env = 0.5;
+    for (let i = 0; i < total; i++) {
+      env = Math.max(0.08, Math.min(1, env + (rnd2() - 0.5) * 0.35));
+      const beatBoost = i % 14 < 2 ? 0.25 : 0;
+      const h = Math.max(3, Math.round((env + beatBoost) * 60));
+      bars.push({ h, color: i / total < 0.366 ? '#E8933A' : '#3A3A41' });
+    }
+
+    const kfs = [
+      { time: '0:12', style: 'particles', c1: '#4F46E5', c2: '#7C3AED', c3: '#EC4899' },
+      { time: '0:58', style: 'cyberpunk', c1: '#F0ABFC', c2: '#22D3EE', c3: '#4ADE80' },
+      { time: '2:20', style: 'nebula', c1: '#8B5CF6', c2: '#A78BFA', c3: '#C4B5FD' },
+    ];
+
+    const active = '#E8933A';
+    const inactive = '#6C6C74';
+    return {
+      presets, sceneDots, bars, kfs,
+      showSettings,
+      toggleSettings: () => this.setState({ showSettings: !s.showSettings }),
+      settingsBtnBg: showSettings ? '#232327' : 'transparent',
+      settingsBtnBorder: showSettings ? '#3A3A41' : 'transparent',
+      settingsBtnColor: showSettings ? '#EDEDEF' : '#A3A3AB',
+      isStyleTab: s.activeTab === 'style',
+      isParamsTab: s.activeTab === 'params',
+      isAiTab: s.activeTab === 'ai',
+      tabStyle: () => this.setState({ activeTab: 'style' }),
+      tabParams: () => this.setState({ activeTab: 'params' }),
+      tabAi: () => this.setState({ activeTab: 'ai' }),
+      styleTabBorder: s.activeTab === 'style' ? active : 'transparent',
+      styleTabColor: s.activeTab === 'style' ? '#EDEDEF' : inactive,
+      paramsTabBorder: s.activeTab === 'params' ? active : 'transparent',
+      paramsTabColor: s.activeTab === 'params' ? '#EDEDEF' : inactive,
+      aiTabBorder: s.activeTab === 'ai' ? active : 'transparent',
+      aiTabColor: s.activeTab === 'ai' ? '#EDEDEF' : inactive,
+      particleCount: s.particleCount,
+      intensity: s.intensity,
+      intensityLabel: s.intensity.toFixed(1),
+      setParticleCount: (e) => this.setState({ particleCount: Number(e.target.value) }),
+      setIntensity: (e) => this.setState({ intensity: Number(e.target.value) }),
+      noop: () => {},
+    };
+  }
+}
+</script>
+</body>
+</html>

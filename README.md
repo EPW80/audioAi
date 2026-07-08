@@ -71,7 +71,7 @@ Navigate to [http://localhost:5173](http://localhost:5173)
 
 ```env
 NODE_ENV=development
-PORT=3001
+PORT=3000
 MONGODB_URI=mongodb://localhost:27017/audioai
 REDIS_URL=redis://localhost:6379
 JWT_SECRET=your-super-secret-jwt-key-at-least-32-chars

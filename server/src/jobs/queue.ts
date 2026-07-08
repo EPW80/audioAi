@@ -10,18 +10,21 @@ export interface RenderJobData {
     fps: number;
     width: number;
     height: number;
-    // AI-hybrid mode fields (optional — omitted for procedural jobs)
-    mode?: 'procedural' | 'ai-hybrid';
+    // AI mode fields (optional — omitted for procedural jobs)
+    mode?: 'procedural' | 'ai-hybrid' | 'ai-video';
+    autoVaryPrompts?: boolean;
     sdPrompt?: string;
     sdNegativePrompt?: string;
     sdModel?: string;
+    svdModel?: string;
+    transitionMode?: 'cut' | 'crossfade' | 'interpolate';
     beatTimestamps?: number[];
     duration?: number;
   };
 }
 
 export interface RenderJobProgress {
-  stage: 'queued' | 'processing' | 'ai-generating' | 'encoding' | 'complete' | 'failed';
+  stage: 'queued' | 'processing' | 'ai-generating' | 'svd-generating' | 'interpolating' | 'encoding' | 'complete' | 'failed';
   progress: number;
   message?: string;
 }

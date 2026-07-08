@@ -30,10 +30,13 @@ export interface IAIStyleSuggestion {
 }
 
 export interface IAISettings {
-  mode: 'procedural' | 'ai-hybrid';
+  mode: 'procedural' | 'ai-hybrid' | 'ai-video';
+  transitionMode?: 'cut' | 'crossfade' | 'interpolate';
+  autoVaryPrompts?: boolean;
   sdPrompt: string;
   sdNegativePrompt: string;
   sdModel: string;
+  svdModel?: string;
   styleSuggestions?: IAIStyleSuggestion[];
   generatedImageIds?: string[];
 }
@@ -113,7 +116,10 @@ const projectSchema = new Schema<IProject>(
     },
     keyframes: { type: [keyframeSchema], default: [] },
     aiSettings: {
-      mode: { type: String, enum: ['procedural', 'ai-hybrid'], default: 'procedural' },
+      mode: { type: String, enum: ['procedural', 'ai-hybrid', 'ai-video'], default: 'procedural' },
+      transitionMode: { type: String, enum: ['cut', 'crossfade', 'interpolate'], default: 'crossfade' },
+      autoVaryPrompts: { type: Boolean, default: true },
+      svdModel: { type: String, default: '' },
       sdPrompt: { type: String, default: '' },
       sdNegativePrompt: { type: String, default: 'blurry, distorted, low quality, watermark' },
       sdModel: { type: String, default: 'stability-ai/stable-diffusion:ac732df83cea7fff18b8472768c88ad041fa750d7579acdf40d2d39bfe9e4d05' },

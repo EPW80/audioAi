@@ -8,6 +8,7 @@ import {
   Settings,
   ArrowLeft,
   Loader2,
+  Music,
   Sparkles,
   Wand2,
 } from 'lucide-react';
@@ -20,6 +21,9 @@ import { TimelineEditor } from '../components/timeline/TimelineEditor';
 import { getInterpolatedState } from '../lib/keyframeEngine';
 import { StyleSuggestionPanel } from '../components/ai/StyleSuggestionPanel';
 import { PromptEngineeringPanel } from '../components/ai/PromptEngineeringPanel';
+import { Button } from '../components/ui/Button';
+import { SegmentedControl } from '../components/ui/SegmentedControl';
+import { STATUS_META } from '../components/ui/StatusDot';
 import type { VisualStyle, Keyframe, AISettings } from '../types';
 
 interface Project {
@@ -43,6 +47,12 @@ interface Project {
     resolution?: '720p' | '1080p';
   };
   aiSettings?: AISettings;
+}
+
+function formatTime(s: number) {
+  const m = Math.floor(s / 60);
+  const sec = Math.floor(s % 60);
+  return `${m}:${sec.toString().padStart(2, '0')}`;
 }
 
 export function Editor() {
@@ -205,69 +215,99 @@ export function Editor() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-[calc(100vh-4rem)]">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      <div className="flex items-center justify-center h-dvh">
+        <Loader2 className="w-8 h-8 animate-spin text-accent" />
       </div>
     );
   }
 
   if (error || !project) {
     return (
-      <div className="container mx-auto px-4 py-16 text-center">
-        <p className="text-xl text-red-400">Project not found</p>
-        <button onClick={() => navigate('/projects')} className="mt-4 text-primary hover:underline">
-          Back to Projects
+      <div className="max-w-[1120px] mx-auto px-6 py-16 text-center">
+        <p className="text-xl" style={{ color: 'var(--status-failed)' }}>
+          Project not found
+        </p>
+        <button
+          onClick={() => navigate('/projects')}
+          className="mt-4 text-accent hover:text-accent-hover transition-colors duration-150"
+        >
+          Back to projects
         </button>
       </div>
     );
   }
 
   const audioUrl = `/${project.audioPath}`;
+  const statusMeta = STATUS_META[project.status as keyof typeof STATUS_META] ?? STATUS_META.uploaded;
+  const bpm = project.audioMetadata?.bpm;
+  const totalDuration = duration || project.audioMetadata?.duration || 0;
+
+  const TABS = [
+    { id: 'style' as const, label: 'Style', icon: Sparkles },
+    { id: 'params' as const, label: 'Params', icon: Settings },
+    { id: 'ai' as const, label: 'AI', icon: Wand2 },
+  ];
 
   return (
-    <div className="h-[calc(100vh-4rem)] flex flex-col">
+    <div className="h-dvh flex flex-col overflow-hidden bg-app">
       <audio ref={audioRef as React.RefObject<HTMLAudioElement>} src={audioUrl} crossOrigin="anonymous" preload="auto" />
 
       {/* Top bar */}
-      <div className="h-14 border-b border-border flex items-center justify-between px-4">
-        <div className="flex items-center gap-4">
-          <button onClick={() => navigate('/projects')} className="p-2 rounded hover:bg-accent transition-colors">
-            <ArrowLeft className="w-5 h-5" />
-          </button>
-          <h1 className="font-semibold">{project.name}</h1>
+      <div className="h-[52px] shrink-0 bg-panel border-b border-border flex items-center justify-between px-3">
+        <div className="flex items-center gap-3">
+          <Button variant="ghost" icon onClick={() => navigate('/projects')}>
+            <ArrowLeft className="w-4 h-4" />
+          </Button>
+          <span className="w-6 h-6 bg-accent rounded-md flex items-center justify-center">
+            <Music className="w-3.5 h-3.5 text-accent-on" />
+          </span>
+          <h1 className="text-sm font-semibold">{project.name}</h1>
+          <span
+            className="font-mono text-[10px] uppercase px-1.5 py-0.5 rounded"
+            style={{ background: statusMeta.pillBg, color: statusMeta.color }}
+          >
+            {project.status}
+          </span>
         </div>
 
         <div className="flex items-center gap-2">
+          {(bpm || totalDuration > 0) && (
+            <span className="font-mono text-[11px] text-fg-muted mr-1">
+              {bpm ? `${Math.round(bpm)} BPM` : ''}
+              {bpm && totalDuration > 0 ? ' · ' : ''}
+              {totalDuration > 0 ? formatTime(totalDuration) : ''}
+            </span>
+          )}
           <button
             onClick={() => setShowSettings(!showSettings)}
-            className={`p-2 rounded transition-colors ${showSettings ? 'bg-accent' : 'hover:bg-accent'}`}
+            className={`p-[7px] rounded-md border transition-colors duration-150 ${
+              showSettings
+                ? 'bg-raised border-border-strong text-fg'
+                : 'border-transparent text-fg-secondary hover:bg-raised hover:text-fg'
+            }`}
           >
-            <Settings className="w-5 h-5" />
+            <Settings className="w-4 h-4" />
           </button>
-          <button
-            onClick={handleExport}
-            disabled={exporting}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors disabled:opacity-50"
-          >
+          <Button variant="primary" size="sm" onClick={handleExport} disabled={exporting}>
             {exporting ? (
               <>
-                <Loader2 className="w-4 h-4 animate-spin" />
+                <Loader2 className="w-3.5 h-3.5 animate-spin" />
                 {exportProgress}%
               </>
             ) : (
               <>
-                <Download className="w-4 h-4" />
+                <Download className="w-3.5 h-3.5" />
                 Export
               </>
             )}
-          </button>
+          </Button>
         </div>
       </div>
 
       {/* Main content */}
-      <div className="flex-1 relative overflow-hidden">
-        {/* Visualization area */}
-        <div className="w-full h-full p-4">
+      <div className="flex-1 flex min-h-0">
+        {/* Viewport */}
+        <div className="flex-1 min-w-0 relative m-3 bg-inset-deep border border-border rounded-lg overflow-hidden">
           <Scene
             ref={sceneRef}
             analysisData={analysisData}
@@ -276,70 +316,85 @@ export function Editor() {
             intensity={intensity}
             style={activeStyle}
           />
+          <span className="absolute top-2.5 left-3 font-mono text-[10px] uppercase text-fg-muted pointer-events-none">
+            Preview · {activeStyle}
+          </span>
+          <span className="absolute bottom-2.5 right-3 font-mono text-[10px] text-fg-muted pointer-events-none">
+            {resolution} · 30 fps
+          </span>
         </div>
 
-        {/* Settings panel — absolute overlay so it doesn't fight the flex layout */}
+        {/* Settings panel */}
         {showSettings && (
-          <div className="absolute top-0 right-0 h-full w-80 border-l border-border flex flex-col bg-background z-10">
+          <aside className="w-[300px] shrink-0 bg-panel border-l border-border flex flex-col min-h-0">
             {/* Tabs */}
-            <div className="flex border-b border-border">
-              <button
-                onClick={() => setActiveTab('style')}
-                className={`flex-1 py-3 text-sm font-medium transition-colors ${activeTab === 'style' ? 'text-primary border-b-2 border-primary' : 'text-muted-foreground hover:text-foreground'}`}
-              >
-                <span className="flex items-center justify-center gap-1.5">
-                  <Sparkles className="w-3.5 h-3.5" />
-                  Style
-                </span>
-              </button>
-              <button
-                onClick={() => setActiveTab('params')}
-                className={`flex-1 py-3 text-sm font-medium transition-colors ${activeTab === 'params' ? 'text-primary border-b-2 border-primary' : 'text-muted-foreground hover:text-foreground'}`}
-              >
-                <span className="flex items-center justify-center gap-1.5">
-                  <Settings className="w-3.5 h-3.5" />
-                  Parameters
-                </span>
-              </button>
-              <button
-                onClick={() => setActiveTab('ai')}
-                className={`flex-1 py-3 text-sm font-medium transition-colors ${activeTab === 'ai' ? 'text-primary border-b-2 border-primary' : 'text-muted-foreground hover:text-foreground'}`}
-              >
-                <span className="flex items-center justify-center gap-1.5">
-                  <Wand2 className="w-3.5 h-3.5" />
-                  AI
-                </span>
-              </button>
+            <div className="flex border-b border-border shrink-0">
+              {TABS.map(({ id, label, icon: Icon }) => (
+                <button
+                  key={id}
+                  onClick={() => setActiveTab(id)}
+                  className={`flex-1 py-2.5 text-[13px] font-medium transition-colors duration-150 border-b-2 -mb-px ${
+                    activeTab === id
+                      ? 'text-fg border-accent'
+                      : 'text-fg-muted border-transparent hover:text-fg-secondary'
+                  }`}
+                >
+                  <span className="flex items-center justify-center gap-1.5">
+                    <Icon className="w-[13px] h-[13px]" />
+                    {label}
+                  </span>
+                </button>
+              ))}
             </div>
 
-            <div className="flex-1 overflow-y-auto p-4 space-y-4">
+            <div className="flex-1 overflow-y-auto p-3.5 space-y-3.5">
               {activeTab === 'style' ? (
                 <>
-                  <p className="text-xs text-muted-foreground">Choose a visual preset. Parameters will update to match.</p>
-                  <div className="grid grid-cols-1 gap-3">
-                    {PRESETS.map((preset) => (
-                      <button
-                        key={preset.id}
-                        onClick={() => handleSelectPreset(preset)}
-                        className={`text-left p-3 rounded-lg border-2 transition-all ${activeStyle === preset.id
-                            ? 'border-primary bg-primary/10'
-                            : 'border-border hover:border-primary/50 hover:bg-accent'
-                          }`}
-                      >
-                        {/* Color swatches */}
-                        <div className="flex gap-1 mb-2">
-                          {preset.defaultSettings.colorPalette.map((c, i) => (
-                            <div
-                              key={i}
-                              className="w-4 h-4 rounded-full"
-                              style={{ backgroundColor: c }}
-                            />
-                          ))}
-                        </div>
-                        <div className="font-medium text-sm">{preset.name}</div>
-                        <div className="text-xs text-muted-foreground mt-0.5">{preset.description}</div>
-                      </button>
-                    ))}
+                  <p className="text-xs text-fg-muted">
+                    Choose a visual preset. Parameters will update to match.
+                  </p>
+                  <div className="grid grid-cols-1 gap-2">
+                    {PRESETS.map((preset) => {
+                      const selected = activeStyle === preset.id;
+                      return (
+                        <button
+                          key={preset.id}
+                          onClick={() => handleSelectPreset(preset)}
+                          className="text-left px-3 py-2.5 rounded-lg border transition-colors duration-150"
+                          style={{
+                            background: selected ? 'rgba(232, 147, 58, 0.07)' : 'var(--bg-card-nested)',
+                            borderColor: selected ? 'rgba(232, 147, 58, 0.45)' : 'var(--border)',
+                          }}
+                          onMouseEnter={(e) => {
+                            if (!selected) e.currentTarget.style.borderColor = 'var(--border-hover-card)';
+                          }}
+                          onMouseLeave={(e) => {
+                            if (!selected) e.currentTarget.style.borderColor = 'var(--border)';
+                          }}
+                        >
+                          <div className="flex items-center gap-2">
+                            <div className="flex gap-1">
+                              {preset.defaultSettings.colorPalette.map((c, i) => (
+                                <span
+                                  key={i}
+                                  className="w-2.5 h-2.5 rounded-[3px]"
+                                  style={{ backgroundColor: c }}
+                                />
+                              ))}
+                            </div>
+                            <span className="text-[13px] font-semibold">{preset.name}</span>
+                            {selected && (
+                              <span className="ml-auto font-mono text-[9px] uppercase text-accent">
+                                Active
+                              </span>
+                            )}
+                          </div>
+                          <div className="text-xs leading-[17px] text-fg-muted mt-1">
+                            {preset.description}
+                          </div>
+                        </button>
+                      );
+                    })}
                   </div>
                 </>
               ) : activeTab === 'ai' ? (
@@ -360,9 +415,12 @@ export function Editor() {
               ) : (
                 <>
                   <div>
-                    <label className="block text-sm text-muted-foreground mb-2">
-                      Particle Count: {particleCount}
-                    </label>
+                    <div className="flex items-center justify-between mb-2">
+                      <label className="text-[13px] font-medium text-fg-secondary">
+                        Particle count
+                      </label>
+                      <span className="font-mono text-xs text-fg">{particleCount}</span>
+                    </div>
                     <input
                       type="range"
                       min="500"
@@ -370,14 +428,17 @@ export function Editor() {
                       step="100"
                       value={particleCount}
                       onChange={(e) => setParticleCount(Number(e.target.value))}
-                      className="w-full"
+                      className="slider w-full"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm text-muted-foreground mb-2">
-                      Intensity: {intensity.toFixed(1)}
-                    </label>
+                    <div className="flex items-center justify-between mb-2">
+                      <label className="text-[13px] font-medium text-fg-secondary">
+                        Intensity
+                      </label>
+                      <span className="font-mono text-xs text-fg">{intensity.toFixed(1)}</span>
+                    </div>
                     <input
                       type="range"
                       min="0.1"
@@ -385,12 +446,14 @@ export function Editor() {
                       step="0.1"
                       value={intensity}
                       onChange={(e) => setIntensity(Number(e.target.value))}
-                      className="w-full"
+                      className="slider w-full"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm text-muted-foreground mb-2">Colors</label>
+                    <label className="block text-[13px] font-medium text-fg-secondary mb-2">
+                      Colors
+                    </label>
                     <div className="flex gap-2">
                       {colorPalette.map((color, i) => (
                         <input
@@ -402,49 +465,44 @@ export function Editor() {
                             newPalette[i] = e.target.value;
                             setColorPalette(newPalette);
                           }}
-                          className="w-10 h-10 rounded cursor-pointer"
+                          className="w-[34px] h-[34px] rounded-md border border-border cursor-pointer bg-transparent"
                         />
                       ))}
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-sm text-muted-foreground mb-2">Export Resolution</label>
-                    <div className="flex gap-2">
-                      {(['720p', '1080p'] as const).map((res) => (
-                        <button
-                          key={res}
-                          onClick={() => setResolution(res)}
-                          className={`flex-1 py-1.5 rounded text-sm font-medium transition-colors ${resolution === res ? 'bg-primary text-primary-foreground' : 'bg-accent hover:bg-accent/80'}`}
-                        >
-                          {res}
-                        </button>
-                      ))}
-                    </div>
+                    <label className="block text-[13px] font-medium text-fg-secondary mb-2">
+                      Export resolution
+                    </label>
+                    <SegmentedControl
+                      options={[
+                        { value: '720p', label: '720p' },
+                        { value: '1080p', label: '1080p' },
+                      ]}
+                      value={resolution}
+                      onChange={setResolution}
+                    />
                   </div>
                 </>
               )}
             </div>
 
-            <div className="p-4 border-t border-border">
-              <button
-                onClick={handleSaveSettings}
-                className="w-full py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
-              >
+            <div className="px-3 py-3.5 border-t border-border shrink-0">
+              <Button variant="primary" size="sm" className="w-full" onClick={handleSaveSettings}>
                 {updateSettingsMutation.isPending ? (
-                  <Loader2 className="w-4 h-4 animate-spin mx-auto" />
+                  <Loader2 className="w-4 h-4 animate-spin" />
                 ) : (
-                  'Save Settings'
+                  'Save settings'
                 )}
-              </button>
+              </Button>
             </div>
-          </div>
+          </aside>
         )}
       </div>
 
-      {/* Bottom controls */}
-      <div className="border-t border-border p-4 space-y-3">
-        {/* Timeline editor */}
+      {/* Bottom dock */}
+      <div className="shrink-0 bg-panel border-t border-border px-4 py-3 space-y-2.5">
         <TimelineEditor
           duration={duration}
           currentTime={currentTime}
@@ -458,20 +516,24 @@ export function Editor() {
           onSeek={seek}
         />
 
-        {/* Playback controls + waveform */}
+        {/* Transport */}
         <div className="flex items-center gap-4">
           <button
             onClick={handlePlayPause}
-            className="p-3 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 transition-colors flex-shrink-0"
+            className="w-11 h-11 rounded-full bg-accent text-accent-on hover:bg-accent-hover transition-colors duration-150 flex items-center justify-center flex-shrink-0"
           >
-            {isPlaying ? <Pause className="w-6 h-6" /> : <Play className="w-6 h-6 ml-0.5" />}
+            {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5 ml-0.5" />}
           </button>
 
-          <div className="flex-1">
+          <span className="font-mono text-[13px] whitespace-nowrap">
+            <span className="text-fg">{formatTime(currentTime)}</span>
+            <span className="text-fg-muted"> / {formatTime(totalDuration)}</span>
+          </span>
+
+          <div className="flex-1 min-w-0">
             <WaveformDisplay
               audioUrl={audioUrl}
               audioRef={audioRef}
-              currentTime={currentTime}
               duration={duration}
               isPlaying={isPlaying}
               onSeek={seek}

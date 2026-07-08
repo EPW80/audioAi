@@ -31,10 +31,13 @@ export interface AIStyleSuggestion {
 }
 
 export interface AISettings {
-  mode: 'procedural' | 'ai-hybrid';
+  mode: 'procedural' | 'ai-hybrid' | 'ai-video';
+  transitionMode?: 'cut' | 'crossfade' | 'interpolate';
+  autoVaryPrompts?: boolean;
   sdPrompt: string;
   sdNegativePrompt: string;
   sdModel: string;
+  svdModel?: string;
   styleSuggestions?: AIStyleSuggestion[];
   generatedImageIds?: string[];
 }
@@ -63,7 +66,7 @@ export interface RenderJob {
   id: string;
   state: "waiting" | "active" | "completed" | "failed" | "delayed";
   progress: number;
-  stage: "queued" | "processing" | "ai-generating" | "encoding" | "complete" | "failed";
+  stage: "queued" | "processing" | "ai-generating" | "svd-generating" | "interpolating" | "encoding" | "complete" | "failed";
   failedReason?: string;
 }
 

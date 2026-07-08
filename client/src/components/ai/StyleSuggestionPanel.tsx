@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Sparkles, RefreshCw } from "lucide-react";
 import { aiApi } from "../../lib/api";
+import { Button } from "../ui/Button";
 import type { AIStyleSuggestion, VisualStyle } from "../../types";
 
 interface StyleSuggestionPanelProps {
@@ -44,26 +45,28 @@ export function StyleSuggestionPanel({
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3.5">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-white/90">Style Suggestions</h3>
+        <h3 className="text-[13px] font-semibold">Style suggestions</h3>
         {analyzed && (
           <button
             onClick={() => handleAnalyze(true)}
             disabled={isLoading}
-            className="text-xs text-indigo-400 hover:text-indigo-300 flex items-center gap-1 disabled:opacity-50"
+            className="text-xs text-accent hover:text-accent-hover flex items-center gap-1 disabled:opacity-50 transition-colors duration-150"
           >
-            <RefreshCw size={12} className={isLoading ? "animate-spin" : ""} />
+            <RefreshCw size={11} className={isLoading ? "animate-spin" : ""} />
             Refresh
           </button>
         )}
       </div>
 
       {!analyzed && (
-        <button
+        <Button
+          variant="secondary"
+          size="sm"
+          className="w-full"
           onClick={() => handleAnalyze(false)}
           disabled={isLoading || !hasAudioMetadata}
-          className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-medium transition-colors"
         >
           {isLoading ? (
             <>
@@ -72,27 +75,36 @@ export function StyleSuggestionPanel({
             </>
           ) : (
             <>
-              <Sparkles size={14} />
+              <Sparkles size={14} className="text-accent" />
               Analyze with AI
             </>
           )}
-        </button>
+        </Button>
       )}
 
       {!hasAudioMetadata && (
-        <p className="text-xs text-amber-400/80">
+        <p className="text-xs text-fg-muted">
           Audio analysis must complete before AI suggestions are available.
         </p>
       )}
 
       {error && (
-        <p className="text-xs text-red-400 bg-red-900/20 rounded p-2">{error}</p>
+        <p
+          className="text-xs rounded-md p-2"
+          style={{
+            color: "var(--status-failed)",
+            background: "rgba(217, 95, 88, 0.1)",
+            border: "1px solid rgba(217, 95, 88, 0.3)",
+          }}
+        >
+          {error}
+        </p>
       )}
 
       {overallMood && (
         <div className="flex items-center gap-2">
-          <span className="text-xs text-white/50">Mood:</span>
-          <span className="text-xs px-2 py-0.5 rounded-full bg-indigo-900/60 text-indigo-300 font-medium">
+          <span className="text-xs text-fg-muted">Mood:</span>
+          <span className="font-mono text-[10px] uppercase px-[7px] py-0.5 rounded bg-raised border border-border text-fg-secondary">
             {overallMood}
           </span>
         </div>
@@ -103,21 +115,19 @@ export function StyleSuggestionPanel({
           {suggestions.map((s) => (
             <div
               key={s.styleId}
-              className="rounded-lg bg-white/5 border border-white/10 p-3 space-y-2"
+              className="rounded-lg bg-card-nested border border-border p-3 space-y-2"
             >
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-white capitalize">
-                  {s.styleId}
-                </span>
+                <span className="text-[13px] font-semibold capitalize">{s.styleId}</span>
                 <div className="flex items-center gap-2">
                   {/* Confidence bar */}
-                  <div className="w-16 h-1.5 rounded-full bg-white/10 overflow-hidden">
+                  <div className="w-14 h-1 rounded-full bg-border overflow-hidden">
                     <div
-                      className="h-full rounded-full bg-indigo-500"
+                      className="h-full rounded-full bg-accent"
                       style={{ width: `${Math.round(s.score * 100)}%` }}
                     />
                   </div>
-                  <span className="text-xs text-white/40">
+                  <span className="font-mono text-[11px] text-fg-muted">
                     {Math.round(s.score * 100)}%
                   </span>
                 </div>
@@ -128,14 +138,14 @@ export function StyleSuggestionPanel({
                 {s.suggestedPalette.map((color) => (
                   <div
                     key={color}
-                    className="w-5 h-5 rounded-sm border border-white/10"
+                    className="w-4 h-4 rounded border border-border"
                     style={{ backgroundColor: color }}
                     title={color}
                   />
                 ))}
               </div>
 
-              <p className="text-xs text-white/60 leading-relaxed">{s.explanation}</p>
+              <p className="text-xs leading-[18px] text-fg-secondary">{s.explanation}</p>
 
               <button
                 onClick={() =>
@@ -145,7 +155,7 @@ export function StyleSuggestionPanel({
                     s.suggestedPrompt
                   )
                 }
-                className="text-xs text-indigo-400 hover:text-indigo-300 font-medium transition-colors"
+                className="text-xs text-accent hover:text-accent-hover font-semibold transition-colors duration-150"
               >
                 Apply style
               </button>

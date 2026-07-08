@@ -1,90 +1,106 @@
 import { Link } from 'react-router-dom';
 import { Upload, Sparkles, Download } from 'lucide-react';
 import { useAuthStore } from '../stores/authStore';
-import { AnimatedGradient } from '../components/ui/AnimatedGradient';
-import { GridBackground } from '../components/ui/GridBackground';
-import { FloatingShapes } from '../components/ui/FloatingShapes';
-import { ParticleBackground } from '../components/ui/ParticleBackground';
-import { GlassCard } from '../components/ui/GlassCard';
-import { GlassButton } from '../components/ui/GlassButton';
-import { HexagonPattern } from '../components/ui/HexagonPattern';
-import { NeonText } from '../components/ui/NeonText';
+import { Button } from '../components/ui/Button';
+import { Card } from '../components/ui/Card';
+
+const PLAYHEAD = 0.42;
+
+// Deterministic bars matching the design prototype's seeded generator
+function generateBars(total = 96) {
+  let seed = 31;
+  const rnd = () => {
+    seed = (seed * 16807) % 2147483647;
+    return (seed - 1) / 2147483646;
+  };
+  const bars: { h: number; played: boolean }[] = [];
+  let env = 0.5;
+  for (let i = 0; i < total; i++) {
+    env = Math.max(0.1, Math.min(1, env + (rnd() - 0.5) * 0.4));
+    const beat = i % 8 < 1 ? 0.3 : 0;
+    bars.push({
+      h: Math.max(6, Math.round((env + beat) * 88)),
+      played: i / total < PLAYHEAD,
+    });
+  }
+  return bars;
+}
+
+const BARS = generateBars();
+
+const FEATURES = [
+  {
+    icon: Upload,
+    title: 'Upload audio',
+    body: 'Support for MP3, WAV, FLAC, and more. Simply drag and drop your audio files.',
+  },
+  {
+    icon: Sparkles,
+    title: 'AI visualization',
+    body: 'Beat-matched particle systems that react to your music in real-time.',
+  },
+  {
+    icon: Download,
+    title: 'Export video',
+    body: 'Download your creation as a high-quality 720p MP4 video file.',
+  },
+];
 
 export function Home() {
   const user = useAuthStore((state) => state.user);
 
   return (
-    <div className="relative min-h-screen">
-      {/* Background layers */}
-      <AnimatedGradient variant="vaporwave" />
-      <GridBackground variant="grid" color="cyan" animate />
-      <FloatingShapes shapes="mixed" count={6} />
-      <ParticleBackground particleCount={50} color="cyan" />
-
-      <div className="relative z-10 container mx-auto px-4 py-16">
-        <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-5xl font-bold mb-6 font-tech">
-            Transform Audio to
-            <span className="chrome-text"> Visual Art</span>
-          </h1>
-          <p className="text-xl text-foreground/80 mb-12">
-            Upload your music and watch it come alive with{' '}
-            <NeonText color="pink" intensity="medium" animate>
-              AI-powered visualizations
-            </NeonText>
-            .
-            <br />
-            Beat-matched particles, synchronized colors, and stunning video exports.
-          </p>
-
-          <div className="flex gap-4 justify-center mb-16">
-            <Link to={user ? '/projects' : '/login'}>
-              <GlassButton variant="neon" glowColor="pink" size="lg">
-                Get Started
-              </GlassButton>
-            </Link>
-            <a href="#features">
-              <GlassButton variant="secondary" glowColor="cyan" size="lg">
-                Learn More
-              </GlassButton>
-            </a>
-          </div>
-
-          <div id="features" className="grid md:grid-cols-3 gap-8 text-left">
-            <GlassCard glowColor="cyan" hover className="p-6 relative">
-              <HexagonPattern color="cyan" opacity={0.05} size="sm" />
-              <div className="relative z-10">
-                <Upload className="w-10 h-10 text-neon-cyan drop-shadow-glow mb-4" />
-                <h3 className="text-xl font-semibold mb-2 font-tech">Upload Audio</h3>
-                <p className="text-foreground/70">
-                  Support for MP3, WAV, FLAC, and more. Simply drag and drop your audio files.
-                </p>
-              </div>
-            </GlassCard>
-
-            <GlassCard glowColor="pink" hover className="p-6 relative">
-              <HexagonPattern color="pink" opacity={0.05} size="sm" />
-              <div className="relative z-10">
-                <Sparkles className="w-10 h-10 text-neon-pink drop-shadow-glow mb-4" />
-                <h3 className="text-xl font-semibold mb-2 font-tech">AI Visualization</h3>
-                <p className="text-foreground/70">
-                  Beat-matched particle systems that react to your music in real-time.
-                </p>
-              </div>
-            </GlassCard>
-
-            <GlassCard glowColor="purple" hover className="p-6 relative">
-              <HexagonPattern color="purple" opacity={0.05} size="sm" />
-              <div className="relative z-10">
-                <Download className="w-10 h-10 text-neon-purple drop-shadow-glow mb-4" />
-                <h3 className="text-xl font-semibold mb-2 font-tech">Export Video</h3>
-                <p className="text-foreground/70">
-                  Download your creation as a high-quality 720p MP4 video file.
-                </p>
-              </div>
-            </GlassCard>
-          </div>
+    <div className="max-w-[1120px] mx-auto px-6 pt-24 w-full">
+      <div className="max-w-[720px] mx-auto text-center">
+        <div className="font-mono text-xs font-medium tracking-[0.14em] uppercase text-accent mb-5">
+          Audio → Video Visualization
         </div>
+        <h1 className="text-[52px] leading-[1.08] font-semibold tracking-[-0.025em] mb-5 [text-wrap:balance]">
+          Transform audio to <span className="text-accent">visual art</span>
+        </h1>
+        <p className="text-[17px] leading-[26px] text-fg-secondary mb-9 [text-wrap:pretty]">
+          Upload your music and watch it come alive with AI-powered visualizations.
+          Beat-matched particles, synchronized colors, and stunning video exports.
+        </p>
+        <div className="flex gap-3 justify-center mb-[72px]">
+          <Link to={user ? '/projects' : '/login'}>
+            <Button variant="primary">Get started</Button>
+          </Link>
+          <a href="#features">
+            <Button variant="secondary">Learn more</Button>
+          </a>
+        </div>
+      </div>
+
+      {/* Waveform motif */}
+      <div className="max-w-[880px] mx-auto mb-[72px] px-6 py-5 bg-inset border border-border rounded-[10px]">
+        <div className="flex items-center gap-0.5 h-[72px]">
+          {BARS.map((bar, i) => (
+            <div
+              key={i}
+              className={`flex-1 rounded-[1px] ${bar.played ? 'bg-accent' : 'bg-border-strong'}`}
+              style={{ height: `${bar.h}%` }}
+            />
+          ))}
+        </div>
+        <div className="flex justify-between mt-3 font-mono text-[11px] text-fg-muted">
+          <span>00:00.000</span>
+          <span className="text-accent whitespace-nowrap">▶ midnight-drive.wav</span>
+          <span>03:47.520</span>
+        </div>
+      </div>
+
+      {/* Features */}
+      <div id="features" className="grid md:grid-cols-3 gap-4 pb-24 text-left">
+        {FEATURES.map(({ icon: Icon, title, body }) => (
+          <Card key={title} hover className="p-6">
+            <span className="flex items-center justify-center w-9 h-9 rounded-lg bg-raised border border-border mb-4">
+              <Icon className="w-[18px] h-[18px] text-accent" />
+            </span>
+            <h3 className="text-base leading-[22px] font-semibold mb-1.5">{title}</h3>
+            <p className="text-fg-secondary text-sm leading-[21px]">{body}</p>
+          </Card>
+        ))}
       </div>
     </div>
   );

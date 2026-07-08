@@ -7,69 +7,48 @@ export default {
   theme: {
     extend: {
       colors: {
-        border: "hsl(var(--border))",
-        background: "hsl(var(--background))",
-        'background-secondary': "hsl(var(--background-secondary))",
-        foreground: "hsl(var(--foreground))",
-        primary: {
-          DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))",
+        // Surfaces
+        app: 'var(--bg-app)',
+        panel: 'var(--bg-panel)',
+        raised: 'var(--bg-raised)',
+        inset: 'var(--bg-inset)',
+        'inset-deep': 'var(--bg-inset-deep)',
+        'card-nested': 'var(--bg-card-nested)',
+        // Borders
+        border: {
+          DEFAULT: 'var(--border)',
+          strong: 'var(--border-strong)',
+          'hover-card': 'var(--border-hover-card)',
         },
-        secondary: {
-          DEFAULT: "hsl(var(--secondary))",
-          foreground: "hsl(var(--secondary-foreground))",
+        // Text
+        fg: {
+          DEFAULT: 'var(--text-primary)',
+          secondary: 'var(--text-secondary)',
+          muted: 'var(--text-muted)',
         },
-        muted: {
-          DEFAULT: "hsl(var(--muted))",
-          foreground: "hsl(var(--muted-foreground))",
-        },
+        // Accent
         accent: {
-          DEFAULT: "hsl(var(--accent))",
-          foreground: "hsl(var(--accent-foreground))",
+          DEFAULT: 'var(--accent)',
+          hover: 'var(--accent-hover)',
+          dim: 'var(--accent-dim)',
+          line: 'var(--accent-border)',
+          on: 'var(--on-accent)',
         },
-        // Neon colors
-        'neon-pink': "hsl(var(--neon-pink))",
-        'neon-cyan': "hsl(var(--neon-cyan))",
-        'neon-purple': "hsl(var(--neon-purple))",
-        'neon-magenta': "hsl(var(--neon-magenta))",
-        'neon-blue': "hsl(var(--neon-blue))",
-        // Glass colors
-        'glass-bg': "hsl(var(--glass-bg))",
-        'glass-border': "hsl(var(--glass-border))",
-      },
-      backgroundImage: {
-        'gradient-vaporwave': 'linear-gradient(135deg, hsl(var(--neon-pink)), hsl(var(--neon-cyan)), hsl(var(--neon-purple)))',
-        'gradient-cyber': 'linear-gradient(135deg, hsl(var(--neon-cyan)), hsl(var(--neon-blue)), hsl(var(--neon-purple)))',
-        'gradient-neon': 'linear-gradient(135deg, hsl(var(--neon-magenta)), hsl(var(--neon-pink)), hsl(var(--neon-cyan)))',
-      },
-      backdropBlur: {
-        xs: '2px',
-        '4xl': '80px',
-      },
-      boxShadow: {
-        'glow-sm': '0 0 10px currentColor',
-        'glow': '0 0 10px currentColor, 0 0 20px currentColor',
-        'glow-lg': '0 0 10px currentColor, 0 0 20px currentColor, 0 0 40px currentColor',
-        'neon-pink': '0 0 10px hsl(var(--neon-pink) / 0.5), 0 0 20px hsl(var(--neon-pink) / 0.3)',
-        'neon-cyan': '0 0 10px hsl(var(--neon-cyan) / 0.5), 0 0 20px hsl(var(--neon-cyan) / 0.3)',
-        'neon-purple': '0 0 10px hsl(var(--neon-purple) / 0.5), 0 0 20px hsl(var(--neon-purple) / 0.3)',
-        'glass': '0 8px 32px 0 rgba(0, 255, 255, 0.1)',
-      },
-      animation: {
-        'neon-pulse': 'neon-pulse 2s ease-in-out infinite',
-        'gradient-shift': 'gradient-shift 15s ease infinite',
-        'grid-flow': 'grid-flow 2s linear infinite',
-        'scan-line': 'scan-line 8s linear infinite',
-        'float': 'float 6s ease-in-out infinite',
+        // Status
+        status: {
+          ready: 'var(--status-ready)',
+          analyzing: 'var(--status-analyzing)',
+          rendering: 'var(--status-rendering)',
+          uploaded: 'var(--status-uploaded)',
+          failed: 'var(--status-failed)',
+        },
       },
       fontFamily: {
-        'mono': ['JetBrains Mono', 'Fira Code', 'Courier New', 'monospace'],
-        'tech': ['Orbitron', 'Rajdhani', 'sans-serif'],
+        sans: ['IBM Plex Sans', 'system-ui', 'sans-serif'],
+        mono: ['IBM Plex Mono', 'monospace'],
       },
-      dropShadow: {
-        'glow-sm': '0 0 10px currentColor',
-        'glow': ['0 0 10px currentColor', '0 0 20px currentColor'],
-        'glow-lg': ['0 0 10px currentColor', '0 0 20px currentColor', '0 0 40px currentColor'],
+      animation: {
+        'status-pulse': 'status-pulse 1.2s ease-in-out infinite',
       },
     },
   },

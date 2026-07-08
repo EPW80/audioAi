@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="crossorigin">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    body { margin: 0; background: #141416; }
+  </style>
+</helmet>
+<div data-screen-label="Home (redesign)" style="min-height: 100vh; background: #141416; color: #EDEDEF; font-family: 'IBM Plex Sans', system-ui, sans-serif; display: flex; flex-direction: column;">
+
+  <!-- Header -->
+  <header style="background: #1B1B1E; border-bottom: 1px solid #2A2A2F;">
+    <div style="max-width: 1120px; margin: 0 auto; padding: 0 24px; height: 56px; display: flex; align-items: center; justify-content: space-between;">
+      <a href="#" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: #EDEDEF;">
+        <span style="display: flex; align-items: center; justify-content: center; width: 26px; height: 26px; border-radius: 6px; background: #E8933A;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; width: 15px; height: 15px; color: #191006;"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg></span>
+        <span style="font-size: 15px; font-weight: 600; letter-spacing: -0.01em;">AudioAI</span>
+      </a>
+      <nav style="display: flex; align-items: center; gap: 8px;">
+        <button style="white-space: nowrap; font-weight: 500; font-size: 13px; line-height: 20px; padding: 7px 14px; border-radius: 6px; background: #E8933A; color: #191006; border: none; cursor: pointer; transition: background 0.15s; font-family: 'IBM Plex Sans', sans-serif;" style-hover="background: #F2A44E;">Log in</button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <div style="max-width: 1120px; margin: 0 auto; padding: 96px 24px 0 24px; width: 100%; box-sizing: border-box;">
+    <div style="max-width: 720px; margin: 0 auto; text-align: center;">
+      <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: #E8933A; margin-bottom: 20px;">Audio → Video Visualization</div>
+      <h1 style="font-size: 52px; line-height: 1.08; font-weight: 650; letter-spacing: -0.025em; margin: 0 0 20px 0; text-wrap: balance;">Transform audio to <span style="color: #E8933A;">visual art</span></h1>
+      <p style="font-size: 17px; line-height: 26px; color: #A3A3AB; margin: 0 0 36px 0; text-wrap: pretty;">Upload your music and watch it come alive with AI-powered visualizations. Beat-matched particles, synchronized colors, and stunning video exports.</p>
+      <div style="display: flex; gap: 12px; justify-content: center; margin-bottom: 72px;">
+        <button style="white-space: nowrap; font-weight: 600; font-size: 15px; line-height: 22px; padding: 11px 22px; border-radius: 6px; background: #E8933A; color: #191006; border: none; cursor: pointer; transition: background 0.15s; font-family: 'IBM Plex Sans', sans-serif;" style-hover="background: #F2A44E;">Get started</button>
+        <button style="white-space: nowrap; font-weight: 500; font-size: 15px; line-height: 22px; padding: 11px 22px; border-radius: 6px; background: #232327; color: #EDEDEF; border: 1px solid #2A2A2F; cursor: pointer; transition: all 0.15s; font-family: 'IBM Plex Sans', sans-serif;" style-hover="border-color: #3A3A41; background: #28282D;">Learn more</button>
+      </div>
+    </div>
+
+    <!-- Waveform motif -->
+    <div style="max-width: 880px; margin: 0 auto 72px auto; padding: 20px 24px; background: #101012; border: 1px solid #2A2A2F; border-radius: 10px;">
+      <div style="display: flex; align-items: center; gap: 2px; height: 72px;">
+        <sc-for list="{{ bars }}" as="bar" hint-placeholder-count="0">
+          <div style="flex: 1; border-radius: 1px; height: {{ bar.h }}%; background: {{ bar.color }};"></div>
+        </sc-for>
+      </div>
+      <div style="display: flex; justify-content: space-between; margin-top: 12px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #6C6C74;">
+        <span>00:00.000</span>
+        <span style="color: #E8933A; white-space: nowrap;">▶ midnight-drive.wav</span>
+        <span>03:47.520</span>
+      </div>
+    </div>
+
+    <!-- Features -->
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; padding-bottom: 96px;">
+      <div style="background: #1B1B1E; border: 1px solid #2A2A2F; border-radius: 10px; padding: 24px; transition: border-color 0.15s;" style-hover="border-color: #3A3A41;">
+        <span style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 8px; background: #232327; border: 1px solid #2A2A2F; margin-bottom: 16px;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; width: 18px; height: 18px; color: #E8933A;"><path d="M12 3v12"></path><path d="m17 8-5-5-5 5"></path><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path></svg></span>
+        <h3 style="font-size: 16px; line-height: 22px; font-weight: 600; margin: 0 0 6px 0;">Upload audio</h3>
+        <p style="margin: 0; color: #A3A3AB; font-size: 14px; line-height: 21px;">Support for MP3, WAV, FLAC, and more. Simply drag and drop your audio files.</p>
+      </div>
+      <div style="background: #1B1B1E; border: 1px solid #2A2A2F; border-radius: 10px; padding: 24px; transition: border-color 0.15s;" style-hover="border-color: #3A3A41;">
+        <span style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 8px; background: #232327; border: 1px solid #2A2A2F; margin-bottom: 16px;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; width: 18px; height: 18px; color: #E8933A;"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"></path><path d="M20 2v4"></path><path d="M22 4h-4"></path><circle cx="4" cy="20" r="2"></circle></svg></span>
+        <h3 style="font-size: 16px; line-height: 22px; font-weight: 600; margin: 0 0 6px 0;">AI visualization</h3>
+        <p style="margin: 0; color: #A3A3AB; font-size: 14px; line-height: 21px;">Beat-matched particle systems that react to your music in real-time.</p>
+      </div>
+      <div style="background: #1B1B1E; border: 1px solid #2A2A2F; border-radius: 10px; padding: 24px; transition: border-color 0.15s;" style-hover="border-color: #3A3A41;">
+        <span style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 8px; background: #232327; border: 1px solid #2A2A2F; margin-bottom: 16px;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; width: 18px; height: 18px; color: #E8933A;"><path d="M12 15V3"></path><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><path d="m7 10 5 5 5-5"></path></svg></span>
+        <h3 style="font-size: 16px; line-height: 22px; font-weight: 600; margin: 0 0 6px 0;">Export video</h3>
+        <p style="margin: 0; color: #A3A3AB; font-size: 14px; line-height: 21px;">Download your creation as a high-quality 720p MP4 video file.</p>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;: {&quot;width&quot;: 1440, &quot;height&quot;: 1000}, &quot;playheadPosition&quot;: {&quot;editor&quot;: &quot;range&quot;, &quot;default&quot;: 0.42, &quot;min&quot;: 0, &quot;max&quot;: 1, &quot;step&quot;: 0.01, &quot;tsType&quot;: &quot;number&quot;, &quot;section&quot;: &quot;Waveform motif&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    const playhead = this.props.playheadPosition ?? 0.42;
+    let seed = 31;
+    const rnd = () => { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; };
+    const bars = [];
+    const total = 96;
+    let env = 0.5;
+    for (let i = 0; i < total; i++) {
+      env = Math.max(0.1, Math.min(1, env + (rnd() - 0.5) * 0.4));
+      const beat = i % 8 < 1 ? 0.3 : 0;
+      bars.push({
+        h: Math.max(6, Math.round((env + beat) * 88)),
+        color: i / total < playhead ? '#E8933A' : '#3A3A41',
+      });
+    }
+    return { bars };
+  }
+}
+</script>
+</body>
+</html>

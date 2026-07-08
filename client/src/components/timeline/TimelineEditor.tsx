@@ -79,27 +79,31 @@ export function TimelineEditor({
   if (duration === 0) return null;
 
   return (
-    <div className="w-full space-y-2">
+    <div className="w-full space-y-2.5">
       <div className="flex items-center justify-between">
-        <span className="text-xs text-muted-foreground font-medium uppercase tracking-wide">Timeline</span>
+        <span className="font-mono text-[10px] text-fg-muted uppercase tracking-[0.1em]">
+          Timeline
+        </span>
         <div className="flex items-center gap-2">
           {beats.length > 0 && (
             <>
               <button
                 onClick={() => setShowBeats(!showBeats)}
                 title="Toggle beat markers"
-                className={`flex items-center gap-1 text-xs px-2 py-1 rounded transition-colors ${showBeats ? 'bg-pink-500/20 text-pink-400' : 'bg-accent text-muted-foreground'
-                  }`}
+                className={`flex items-center gap-1 text-xs px-2 py-1 rounded-[5px] bg-raised border transition-colors duration-150 ${
+                  showBeats ? 'border-border-strong text-fg' : 'border-border text-fg-muted'
+                }`}
               >
-                <Music className="w-3 h-3" />
+                <Music className="w-[11px] h-[11px]" />
                 Beats
               </button>
-              <label className="flex items-center gap-1 text-xs text-muted-foreground cursor-pointer">
+              <label className="flex items-center gap-1.5 text-[13px] text-fg-secondary cursor-pointer">
                 <input
                   type="checkbox"
                   checked={snapToBeats}
                   onChange={(e) => setSnapToBeats(e.target.checked)}
-                  className="w-3 h-3 accent-primary"
+                  className="w-3 h-3"
+                  style={{ accentColor: 'var(--accent)' }}
                 />
                 Snap
               </label>
@@ -108,10 +112,10 @@ export function TimelineEditor({
           <button
             onClick={handleAddKeyframe}
             title="Add keyframe at current time"
-            className="flex items-center gap-1 text-xs px-2 py-1 rounded bg-primary/10 hover:bg-primary/20 text-primary transition-colors"
+            className="flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded-[5px] bg-accent-dim border border-accent-line text-accent transition-colors duration-150"
           >
-            <Plus className="w-3 h-3" />
-            Add Keyframe
+            <Plus className="w-[11px] h-[11px]" />
+            Add keyframe
           </button>
         </div>
       </div>
@@ -120,69 +124,79 @@ export function TimelineEditor({
       <div
         ref={railRef}
         onClick={handleRailClick}
-        className="relative h-8 bg-accent rounded cursor-pointer select-none"
+        className="relative h-9 bg-inset border border-border rounded-md cursor-pointer select-none overflow-hidden"
       >
+        {/* Beat grid */}
+        {showBeats &&
+          beats.map((beat, i) => (
+            <div
+              key={`beat-${i}`}
+              className="absolute top-0 bottom-0 w-px pointer-events-none"
+              style={{ left: `${timeToPercent(beat)}%`, background: '#26262B' }}
+            />
+          ))}
+
         {/* Progress fill */}
         <div
-          className="absolute top-0 left-0 h-full bg-primary/20 rounded pointer-events-none"
-          style={{ width: `${timeToPercent(currentTime)}%` }}
+          className="absolute top-0 left-0 h-full pointer-events-none"
+          style={{
+            width: `${timeToPercent(currentTime)}%`,
+            background: 'rgba(232, 147, 58, 0.08)',
+          }}
         />
 
         {/* Playhead */}
         <div
-          className="absolute top-0 bottom-0 w-0.5 bg-primary pointer-events-none"
+          className="absolute top-0 bottom-0 w-0.5 bg-accent pointer-events-none"
           style={{ left: `${timeToPercent(currentTime)}%` }}
         />
-
-        {/* Beat markers */}
-        {showBeats && beats.map((beat, i) => (
-          <div
-            key={`beat-${i}`}
-            className="absolute top-0 bottom-0 w-px bg-pink-500/40 pointer-events-none"
-            style={{ left: `${timeToPercent(beat)}%` }}
-          />
-        ))}
 
         {/* Keyframe markers */}
         {keyframes.map((kf, i) => (
           <div
             key={i}
-            className="absolute top-0 bottom-0 flex flex-col items-center pointer-events-none"
-            style={{ left: `${timeToPercent(kf.time)}%`, transform: 'translateX(-50%)' }}
-          >
-            <div className="w-2 h-2 mt-3 rounded-sm bg-yellow-400 rotate-45" />
-          </div>
+            className="absolute w-2 h-2 rounded-[2px] bg-accent border border-panel pointer-events-none"
+            style={{
+              top: '14px',
+              left: `${timeToPercent(kf.time)}%`,
+              transform: 'translateX(-50%) rotate(45deg)',
+            }}
+          />
         ))}
 
         {/* Time labels */}
-        <div className="absolute bottom-0 left-1 text-[10px] text-muted-foreground pointer-events-none">
+        <div className="absolute bottom-0.5 left-1.5 font-mono text-[9px] text-fg-muted pointer-events-none">
           {formatTime(0)}
         </div>
-        <div className="absolute bottom-0 right-1 text-[10px] text-muted-foreground pointer-events-none">
+        <div className="absolute bottom-0.5 right-1.5 font-mono text-[9px] text-fg-muted pointer-events-none">
           {formatTime(duration)}
         </div>
       </div>
 
-      {/* Keyframe list */}
+      {/* Keyframe chips */}
       {keyframes.length > 0 && (
-        <div className="space-y-1 max-h-24 overflow-y-auto">
+        <div className="flex flex-wrap gap-1.5">
           {keyframes.map((kf, i) => (
             <div
               key={i}
-              className="flex items-center justify-between text-xs px-2 py-1 rounded bg-accent/50 hover:bg-accent"
+              className="flex items-center gap-2 bg-raised border border-border rounded-[5px] px-2 py-1"
             >
-              <span className="text-muted-foreground w-10">{formatTime(kf.time)}</span>
-              <div className="flex gap-1 items-center">
+              <span className="font-mono text-[11px] text-accent">{formatTime(kf.time)}</span>
+              <span className="flex gap-0.5">
                 {kf.settings.colorPalette.map((c, ci) => (
-                  <div key={ci} className="w-3 h-3 rounded-full" style={{ backgroundColor: c }} />
+                  <span
+                    key={ci}
+                    className="w-[9px] h-[9px] rounded-[2px]"
+                    style={{ backgroundColor: c }}
+                  />
                 ))}
-              </div>
-              <span className="capitalize text-muted-foreground">{kf.style}</span>
+              </span>
+              <span className="capitalize text-xs text-fg-secondary">{kf.style}</span>
               <button
                 onClick={() => handleDeleteKeyframe(i)}
-                className="p-0.5 rounded hover:bg-destructive/20 hover:text-destructive transition-colors"
+                className="text-fg-muted hover:text-[var(--status-failed)] transition-colors duration-150"
               >
-                <Trash2 className="w-3 h-3" />
+                <Trash2 className="w-[11px] h-[11px]" />
               </button>
             </div>
           ))}

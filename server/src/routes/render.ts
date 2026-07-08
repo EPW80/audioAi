@@ -41,6 +41,8 @@ router.post('/:projectId/start', async (req: AuthRequest, res: Response): Promis
     const height = resolution === '1080p' ? 1080 : 720;
 
     const isAIHybrid = project.aiSettings?.mode === 'ai-hybrid';
+    const isAIVideo = project.aiSettings?.mode === 'ai-video';
+    const isAIMode = isAIHybrid || isAIVideo;
 
     const job = await addRenderJob({
       projectId: project._id.toString(),
@@ -51,11 +53,14 @@ router.post('/:projectId/start', async (req: AuthRequest, res: Response): Promis
         fps: 30,
         width,
         height,
-        ...(isAIHybrid && {
-          mode: 'ai-hybrid' as const,
-          sdPrompt: project.aiSettings.sdPrompt,
-          sdNegativePrompt: project.aiSettings.sdNegativePrompt,
-          sdModel: project.aiSettings.sdModel,
+        ...(isAIMode && {
+          mode: project.aiSettings!.mode as 'ai-hybrid' | 'ai-video',
+          autoVaryPrompts: project.aiSettings!.autoVaryPrompts ?? true,
+          sdPrompt: project.aiSettings!.sdPrompt,
+          sdNegativePrompt: project.aiSettings!.sdNegativePrompt,
+          sdModel: project.aiSettings!.sdModel,
+          ...(isAIVideo && { svdModel: project.aiSettings!.svdModel }),
+          transitionMode: (project.aiSettings!.transitionMode as 'cut' | 'crossfade' | 'interpolate') || 'crossfade',
           beatTimestamps: project.audioMetadata?.beats ?? [],
           duration: project.audioMetadata?.duration ?? 30,
         }),
